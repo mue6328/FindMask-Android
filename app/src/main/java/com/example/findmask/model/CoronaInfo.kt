@@ -1,0 +1,31 @@
+package com.example.findmask.model
+
+data class CoronaInfo(
+    var resultCode: Int,
+    var TotalCase: Int,
+    var TotalRecovered: Int,
+    var TotalDeath: Int,
+    var NowCase: Int,
+    var city1n: String,
+    var city2n: String,
+    var city3n: String,
+    var city4n: String,
+    var city5n: String,
+    var city1p: Number,
+    var city2p: Number,
+    var city3p: Number,
+    var city4p: Number,
+    var city5p: Number,
+    var recoveredPercentage: Number,
+    var deathPercentage: Number,
+    var checkingCounter: Int,
+    var checkingPercentage: Number,
+    var caseCount: Int,
+    var casePercentage: Number,
+    var notcaseCount: Int,
+    var notcasePercentage: Number,
+    var TotalChecking: Int,
+    var TodayRecovered: Int,
+    var updateTime: String,
+    var resultMessage: String
+)
