@@ -9,6 +9,7 @@ import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.ViewGroup
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.findmask.R
@@ -16,6 +17,7 @@ import com.example.findmask.Utils
 import com.example.findmask.model.MaskByGeoInfo
 import com.example.findmask.service.MaskService
 import kotlinx.android.synthetic.main.activity_main.*
+import net.daum.mf.map.api.MapView
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -27,6 +29,14 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        val mapView = MapView(this)
+
+        val mapViewContainer = map_view
+
+        mapViewContainer.addView(mapView)
+
+
         //Log.d("HashKey", "Null")
 
 //        try {
@@ -66,6 +76,8 @@ class MainActivity : AppCompatActivity() {
                     var latitude = location!!.latitude.toFloat()
                     var altitude = location!!.altitude
 
+
+
                     maskService.getStoreByGeoInfo(latitude, longitude, 500).enqueue(object : Callback<MaskByGeoInfo> {
                         override fun onFailure(call: Call<MaskByGeoInfo>, t: Throwable) {
                             Log.d("error",t.toString())
@@ -75,10 +87,10 @@ class MainActivity : AppCompatActivity() {
                             call: Call<MaskByGeoInfo>,
                             response: Response<MaskByGeoInfo>
                         ) {
-                            gpsTest.setText(
-                                response.body().toString() + response.code() + response.message() +
-                                "위도: " + longitude + "\n" +
-                                        "경도: " + latitude)
+//                            gpsTest.setText(
+//                                response.body().toString() + response.code() + response.message() +
+//                                "위도: " + longitude + "\n" +
+//                                        "경도: " + latitude)
 
                             lm.requestLocationUpdates(LocationManager.GPS_PROVIDER,
                                 1000,
@@ -108,10 +120,10 @@ class MainActivity : AppCompatActivity() {
             var latitude = location!!.latitude
             var altitude = location!!.altitude
 
-            gpsTest.setText(
-                    "위도: " + longitude + "\n" +
-                    "경도: " + latitude + "\n" +
-                    "고도: " + altitude)
+//            gpsTest.setText(
+//                    "위도: " + longitude + "\n" +
+//                    "경도: " + latitude + "\n" +
+//                    "고도: " + altitude)
 
 
         }
