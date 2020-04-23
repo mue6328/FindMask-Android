@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/action_main"
+        android:enabled="true"
+        android:icon="@drawable/ic_home_black_24dp"
+        android:title="메인 화면"/>
+
+    <item
+        android:id="@+id/action_corona"
+        android:enabled="true"
+        android:icon="@drawable/virus"
+        android:title="코로나 정보"/>
+
+    <item
+        android:id="@+id/ddd"
+        android:enabled="true"
+        android:title="3"/>
+
+
+</menu>

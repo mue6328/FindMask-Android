@@ -1,61 +1,56 @@
 package com.example.findmask.activity
 
 import android.content.Context
+import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
+import android.content.pm.Signature
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Base64
 import android.util.Log
 import android.view.ViewGroup
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.findmask.R
 import com.example.findmask.Utils
+import com.example.findmask.model.CoronaInfo
 import com.example.findmask.model.MaskByGeoInfo
+import com.example.findmask.service.CoronaService
 import com.example.findmask.service.MaskService
 import kotlinx.android.synthetic.main.activity_main.*
 import net.daum.mf.map.api.MapView
+import okhttp3.internal.Util
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.security.MessageDigest
+import java.security.NoSuchAlgorithmException
 
 class MainActivity : AppCompatActivity() {
-
-    //var PERMISSIONS: Array<String> = {Manifest.permission}
+    private var maskService: MaskService? = null
+    private var coronaService: CoronaService? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val mapView = MapView(this)
+        initService()
 
-        val mapViewContainer = map_view
+        coronaButton.setOnClickListener {
+            coronaService!!.getCoronaInfo("a7b30c61e5dffb05b51900967fe4ba8a1").enqueue(object : Callback<CoronaInfo> {
+                override fun onFailure(call: Call<CoronaInfo>, t: Throwable) {
 
-        mapViewContainer.addView(mapView)
+                }
 
-
-        //Log.d("HashKey", "Null")
-
-//        try {
-//            var info : PackageInfo = packageManager.getPackageInfo("com.example.findmask", PackageManager.GET_SIGNING_CERTIFICATES)
-////            if(info == null)
-////                Log.d("HashKey", "Null")
-////            else
-////                Log.d("HashKey", info.packageName)
-//            for (signature: Signature in info!!.signatures) {
-//                var md: MessageDigest = MessageDigest.getInstance("SHA")
-//                md.update(signature.toByteArray())
-//                Log.d("KeyHash: ", Base64.encodeToString(md.digest(), Base64.DEFAULT))
-//            }
-//        } catch (e: PackageManager.NameNotFoundException) {
-//            e.printStackTrace()
-//        } catch (e: NoSuchAlgorithmException) {
-//            e.printStackTrace()
-//        }
-        var maskService: MaskService = Utils.retrofit_MASK.create(MaskService::class.java)
+                override fun onResponse(call: Call<CoronaInfo>, response: Response<CoronaInfo>) {
+                    Log.d("Corona", "" + response.body().toString() + response.message() + response.code() + response.errorBody().toString())
+                }
+            })
+        }
 
         gpsButton.setOnClickListener {
             try {
@@ -69,16 +64,17 @@ class MainActivity : AppCompatActivity() {
                         0)
                 }
                 else {
-//                    Log.d("location", location.provider)
                     location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER)
-                    var provider = location!!.provider
                     var longitude = location!!.longitude.toFloat()
                     var latitude = location!!.latitude.toFloat()
-                    var altitude = location!!.altitude
 
+                    val mapView = MapView(this)
 
+                    val mapViewContainer = map_view as ViewGroup
 
-                    maskService.getStoreByGeoInfo(latitude, longitude, 500).enqueue(object : Callback<MaskByGeoInfo> {
+                    mapViewContainer.addView(mapView)
+
+                    maskService!!.getStoreByGeoInfo(latitude, longitude, 500).enqueue(object : Callback<MaskByGeoInfo> {
                         override fun onFailure(call: Call<MaskByGeoInfo>, t: Throwable) {
                             Log.d("error",t.toString())
                         }
@@ -102,16 +98,34 @@ class MainActivity : AppCompatActivity() {
                                 locationListener)
                         }
                     })
-
-
                 }
             }
             catch (e: SecurityException) {
                 e.printStackTrace()
             }
         }
-        }
+    }
 
+    private fun initService() {
+        maskService = Utils.retrofit_MASK.create(MaskService::class.java)
+        coronaService = Utils.retrofit_CORONA.create(CoronaService::class.java)
+    }
+
+    private fun getHashKey() {
+        try {
+            var info : PackageInfo = packageManager.getPackageInfo(packageName, PackageManager.GET_SIGNING_CERTIFICATES)
+            val signatures = info.signingInfo.apkContentsSigners
+            for (signature in signatures) {
+                var md: MessageDigest = MessageDigest.getInstance("SHA")
+                md.update(signature.toByteArray())
+                Log.d("KeyHash: ", Base64.encodeToString(md.digest(), Base64.DEFAULT))
+            }
+        } catch (e: PackageManager.NameNotFoundException) {
+            e.printStackTrace()
+        } catch (e: NoSuchAlgorithmException) {
+            e.printStackTrace()
+        }
+    }
 
     private val locationListener: LocationListener = object : LocationListener {
         override fun onLocationChanged(location: Location?) {
@@ -124,8 +138,6 @@ class MainActivity : AppCompatActivity() {
 //                    "위도: " + longitude + "\n" +
 //                    "경도: " + latitude + "\n" +
 //                    "고도: " + altitude)
-
-
         }
 
         override fun onStatusChanged(p0: String?, p1: Int, p2: Bundle?) {
