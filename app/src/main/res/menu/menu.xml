@@ -14,7 +14,7 @@
         android:title="코로나 정보"/>
 
     <item
-        android:id="@+id/ddd"
+        android:id="@+id/action_3"
         android:enabled="true"
         android:title="3"/>
 

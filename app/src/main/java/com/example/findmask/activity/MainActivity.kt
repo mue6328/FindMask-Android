@@ -12,16 +12,24 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Base64
 import android.util.Log
+import android.view.MenuItem
+import android.view.View
 import android.view.ViewGroup
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.findmask.R
 import com.example.findmask.Utils
+import com.example.findmask.fragment.CoronaFragment
+import com.example.findmask.fragment.Fragment3
+import com.example.findmask.fragment.MainFragment
 import com.example.findmask.model.CoronaInfo
 import com.example.findmask.model.MaskByGeoInfo
 import com.example.findmask.service.CoronaService
 import com.example.findmask.service.MaskService
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.navigation.NavigationView
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.fragment_main.*
 import net.daum.mf.map.api.MapView
 import okhttp3.internal.Util
 import retrofit2.Call
@@ -30,86 +38,24 @@ import retrofit2.Response
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemSelectedListener {
     private var maskService: MaskService? = null
     private var coronaService: CoronaService? = null
+
+    private val mainFragment = MainFragment()
+    private val coronaFragment = CoronaFragment()
+    private val fragment3 = Fragment3()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        initService()
+        var bottomNavigationView = findViewById<View>(R.id.bottom_Navi) as BottomNavigationView
+        bottomNavigationView.setOnNavigationItemSelectedListener(this)
 
-        coronaButton.setOnClickListener {
-            coronaService!!.getCoronaInfo("a7b30c61e5dffb05b51900967fe4ba8a1").enqueue(object : Callback<CoronaInfo> {
-                override fun onFailure(call: Call<CoronaInfo>, t: Throwable) {
-
-                }
-
-                override fun onResponse(call: Call<CoronaInfo>, response: Response<CoronaInfo>) {
-                    Log.d("Corona", "" + response.body().toString() + response.message() + response.code() + response.errorBody().toString())
-                }
-            })
-        }
-
-        gpsButton.setOnClickListener {
-            try {
-                val lm : LocationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
-                var location : Location? = null
-
-                if (Build.VERSION.SDK_INT >= 23 &&
-                        ContextCompat.checkSelfPermission(applicationContext,
-                            android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(this@MainActivity, arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION),
-                        0)
-                }
-                else {
-                    location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER)
-                    var longitude = location!!.longitude.toFloat()
-                    var latitude = location!!.latitude.toFloat()
-
-                    val mapView = MapView(this)
-
-                    val mapViewContainer = map_view as ViewGroup
-
-                    mapViewContainer.addView(mapView)
-
-                    maskService!!.getStoreByGeoInfo(latitude, longitude, 500).enqueue(object : Callback<MaskByGeoInfo> {
-                        override fun onFailure(call: Call<MaskByGeoInfo>, t: Throwable) {
-                            Log.d("error",t.toString())
-                        }
-
-                        override fun onResponse(
-                            call: Call<MaskByGeoInfo>,
-                            response: Response<MaskByGeoInfo>
-                        ) {
-//                            gpsTest.setText(
-//                                response.body().toString() + response.code() + response.message() +
-//                                "위도: " + longitude + "\n" +
-//                                        "경도: " + latitude)
-
-                            lm.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-                                1000,
-                                1.0f,
-                                locationListener)
-                            lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
-                                1000,
-                                1.0f,
-                                locationListener)
-                        }
-                    })
-                }
-            }
-            catch (e: SecurityException) {
-                e.printStackTrace()
-            }
-        }
+        supportFragmentManager.beginTransaction().replace(R.id.frameLayout, mainFragment).commit()
     }
 
-    private fun initService() {
-        maskService = Utils.retrofit_MASK.create(MaskService::class.java)
-        coronaService = Utils.retrofit_CORONA.create(CoronaService::class.java)
-    }
 
     private fun getHashKey() {
         try {
@@ -152,5 +98,20 @@ class MainActivity : AppCompatActivity() {
             TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
         }
 
+    }
+
+    override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        when(item.itemId) {
+            R.id.action_main -> {
+                supportFragmentManager.beginTransaction().replace(R.id.frameLayout, mainFragment).commit()
+            }
+            R.id.action_corona -> {
+                supportFragmentManager.beginTransaction().replace(R.id.frameLayout, coronaFragment).commit()
+            }
+            R.id.action_3 -> {
+                supportFragmentManager.beginTransaction().replace(R.id.frameLayout, fragment3).commit()
+            }
+        }
+        return true
     }
 }
