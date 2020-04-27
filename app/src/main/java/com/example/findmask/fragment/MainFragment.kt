@@ -36,30 +36,18 @@ import java.security.NoSuchAlgorithmException
 class MainFragment : Fragment() {
 
     private var maskService: MaskService? = null
-    private var coronaService: CoronaService? = null
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         var view = inflater.inflate(R.layout.fragment_main, container, false);
 
-        var coronaButton = view.findViewById<Button>(R.id.coronaButton)
         var gpsButton = view.findViewById<Button>(R.id.gpsButton)
 
         val activity = activity
         initService()
 
-        coronaButton.setOnClickListener {
-            coronaService!!.getCoronaInfo(Utils.API_KEY).enqueue(object : Callback<CoronaInfo>{
-                override fun onFailure(call: Call<CoronaInfo>, t: Throwable) {
-                    Log.d("error", t.toString())
-                }
 
-                override fun onResponse(call: Call<CoronaInfo>, response: Response<CoronaInfo>) {
-                    Log.d("Corona", "" + response.body().toString() + response.message() + response.code())
-                }
-
-            })
-        }
 
         gpsButton.setOnClickListener {
             try {
@@ -122,7 +110,6 @@ class MainFragment : Fragment() {
 
     private fun initService() {
         maskService = Utils.retrofit_MASK.create(MaskService::class.java)
-        coronaService = Utils.retrofit_CORONA.create(CoronaService::class.java)
     }
 
 }

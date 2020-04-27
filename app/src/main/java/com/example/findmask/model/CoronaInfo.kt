@@ -26,6 +26,8 @@ data class CoronaInfo(
     var notcasePercentage: String,
     var TotalChecking: String,
     var TodayRecovered: String,
+    var TodayDeath: String,
+    var TotalCaseBefore: String,
     var updateTime: String,
     var resultMessage: String
 )
