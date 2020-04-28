@@ -53,6 +53,8 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         var bottomNavigationView = findViewById<View>(R.id.bottom_Navi) as BottomNavigationView
         bottomNavigationView.setOnNavigationItemSelectedListener(this)
 
+        getHashKey()
+
         supportFragmentManager.beginTransaction().replace(R.id.frameLayout, mainFragment).commit()
     }
 

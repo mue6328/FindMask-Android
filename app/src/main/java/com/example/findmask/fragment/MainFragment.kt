@@ -14,6 +14,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.RelativeLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getSystemService
@@ -42,14 +43,11 @@ class MainFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         var view = inflater.inflate(R.layout.fragment_main, container, false);
 
-        var gpsButton = view.findViewById<Button>(R.id.gpsButton)
-
+        var map = view.findViewById<RelativeLayout>(R.id.map_view)
         val activity = activity
         initService()
 
 
-
-        gpsButton.setOnClickListener {
             try {
                 val lm : LocationManager? = activity!!.getSystemService(Context.LOCATION_SERVICE) as LocationManager
                 var location : Location? = null
@@ -67,7 +65,7 @@ class MainFragment : Fragment() {
 
                     val mapView = MapView(activity)
 
-                    val mapViewContainer = map_view as ViewGroup
+                    val mapViewContainer = map as ViewGroup
 
                     mapViewContainer.addView(mapView)
 
@@ -103,7 +101,7 @@ class MainFragment : Fragment() {
             catch (e: SecurityException) {
                 e.printStackTrace()
             }
-        }
+
 
         return view
     }
