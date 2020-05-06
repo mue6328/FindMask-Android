@@ -4,6 +4,8 @@ import android.content.Context
 import android.content.Context.LOCATION_SERVICE
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
+import android.graphics.Color
+import android.location.Geocoder
 import android.location.Location
 import android.location.LocationManager
 import android.os.Build
@@ -27,6 +29,9 @@ import com.example.findmask.service.CoronaService
 import com.example.findmask.service.MaskService
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_main.*
+import net.daum.mf.map.api.MapCircle
+import net.daum.mf.map.api.MapPOIItem
+import net.daum.mf.map.api.MapPoint
 import net.daum.mf.map.api.MapView
 import retrofit2.Call
 import retrofit2.Callback
@@ -38,6 +43,7 @@ class MainFragment : Fragment() {
 
     private var maskService: MaskService? = null
 
+   // private var gpstracker: GpsTracker
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -59,15 +65,44 @@ class MainFragment : Fragment() {
                         0)
                 }
                 else {
-                    location = lm!!.getLastKnownLocation(LocationManager.GPS_PROVIDER)
-                    var longitude = location!!.longitude.toFloat()
-                    var latitude = location!!.latitude.toFloat()
+                    location = lm!!.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
+                    var longitude = location!!.longitude
+                    var latitude = location!!.latitude
+
+                    var g: Geocoder = Geocoder(activity.applicationContext)
+
+
 
                     val mapView = MapView(activity)
 
                     val mapViewContainer = map as ViewGroup
 
+                    mapView.setMapCenterPoint(MapPoint.mapPointWithGeoCoord(latitude, longitude), true)
+
                     mapViewContainer.addView(mapView)
+
+                    Log.d("gps", "위도: " + latitude + " 경도: " + longitude + g.getFromLocation(latitude, longitude, 10))
+
+                    var marker = MapPOIItem()
+                    marker.itemName = "현재 위치"
+                    marker.mapPoint = MapPoint.mapPointWithGeoCoord(latitude, longitude)
+                    marker.customImageResourceId = R.drawable.baseline_room_black_36dp
+                    marker.markerType = MapPOIItem.MarkerType.CustomImage
+                    marker.selectedMarkerType = MapPOIItem.MarkerType.RedPin
+                    //MapPOIItem.MarkerType
+
+                    var circle = MapCircle(
+                        MapPoint.mapPointWithGeoCoord(latitude, longitude),
+                        500,
+                        Color.argb(128, 0, 0, 0),
+                        Color.argb(64, 0, 255, 255)
+                    )
+
+                    mapView.addPOIItem(marker)
+                    mapView.addCircle(circle)
+//                    mapView.setPOIItemEventListener(MapView.POIItemEventListener() {
+//
+//                    })
 
                     maskService!!.getStoreByGeoInfo(latitude, longitude, 500).enqueue(object :
                         Callback<MaskByGeoInfo> {
@@ -79,6 +114,16 @@ class MainFragment : Fragment() {
                             call: Call<MaskByGeoInfo>,
                             response: Response<MaskByGeoInfo>
                         ) {
+                            for(i in 0 until response.body()!!.count) {
+                                var marker = MapPOIItem()
+                                marker.itemName = response.body()!!.stores[i].name
+                                marker.mapPoint = MapPoint.mapPointWithGeoCoord(response.body()!!.stores[i].lat.toDouble(),
+                                    response.body()!!.stores[i].lng.toDouble())
+                                marker.customImageResourceId = R.drawable.baseline_room_black_36dp
+                                marker.markerType = MapPOIItem.MarkerType.CustomImage
+
+                                mapView.addPOIItem(marker)
+                            }
 //                            gpsTest.setText(
 //                                response.body().toString() + response.code() + response.message() +
 //                                "위도: " + longitude + "\n" +
@@ -105,6 +150,8 @@ class MainFragment : Fragment() {
 
         return view
     }
+
+
 
     private fun initService() {
         maskService = Utils.retrofit_MASK.create(MaskService::class.java)
