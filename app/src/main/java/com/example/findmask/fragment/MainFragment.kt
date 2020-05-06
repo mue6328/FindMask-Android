@@ -100,9 +100,9 @@ class MainFragment : Fragment() {
 
                     mapView.addPOIItem(marker)
                     mapView.addCircle(circle)
-//                    mapView.setPOIItemEventListener(MapView.POIItemEventListener() {
-//
-//                    })
+
+                    var markerr = MapPOIItem()
+
 
                     maskService!!.getStoreByGeoInfo(latitude, longitude, 500).enqueue(object :
                         Callback<MaskByGeoInfo> {
@@ -116,14 +116,30 @@ class MainFragment : Fragment() {
                         ) {
                             for(i in 0 until response.body()!!.count) {
                                 var marker = MapPOIItem()
-                                marker.itemName = response.body()!!.stores[i].name
-                                marker.mapPoint = MapPoint.mapPointWithGeoCoord(response.body()!!.stores[i].lat.toDouble(),
+                                markerr.itemName = response.body()!!.stores[i].name
+                                markerr.mapPoint = MapPoint.mapPointWithGeoCoord(response.body()!!.stores[i].lat.toDouble(),
                                     response.body()!!.stores[i].lng.toDouble())
-                                marker.customImageResourceId = R.drawable.baseline_room_black_36dp
-                                marker.markerType = MapPOIItem.MarkerType.CustomImage
-
-                                mapView.addPOIItem(marker)
+                                markerr.customImageResourceId = R.drawable.baseline_room_black_36dp
+                                if (response.body()!!.stores[i].remain_stat == "plenty") {
+                                    markerr.markerType = MapPOIItem.MarkerType.BluePin
+                                }
+                                else if (response.body()!!.stores[i].remain_stat == "some") {
+                                    markerr.markerType = MapPOIItem.MarkerType.YellowPin
+                                }
+                                else if (response.body()!!.stores[i].remain_stat == "few") {
+                                    markerr.markerType = MapPOIItem.MarkerType.RedPin
+                                }
+                                else if (response.body()!!.stores[i].remain_stat == "empty") {
+                                    markerr.markerType = MapPOIItem.MarkerType.CustomImage
+                                }
+                                else {
+                                    markerr.markerType = MapPOIItem.MarkerType.CustomImage
+                                }
+                                mapView.addPOIItem(markerr)
                             }
+
+
+
 //                            gpsTest.setText(
 //                                response.body().toString() + response.code() + response.message() +
 //                                "위도: " + longitude + "\n" +
@@ -139,6 +155,29 @@ class MainFragment : Fragment() {
 //                                1000,
 //                                1.0f,
 //                                locationListener)
+                        }
+                    })
+                    mapView.setPOIItemEventListener(object : MapView.POIItemEventListener{
+                        override fun onPOIItemSelected(p0: MapView?, p1: MapPOIItem?) {
+                            storeName.text = p1!!.itemName
+                            Log.d("markerClick", "" + p1.itemName)
+
+                            moreInfo.visibility = View.VISIBLE
+                        }
+
+                        override fun onCalloutBalloonOfPOIItemTouched(p0: MapView?, p1: MapPOIItem?
+                        ) {
+
+                        }
+
+                        override fun onCalloutBalloonOfPOIItemTouched(p0: MapView?, p1: MapPOIItem?, p2: MapPOIItem.CalloutBalloonButtonType?
+                        ) {
+
+                        }
+
+                        override fun onDraggablePOIItemMoved(p0: MapView?, p1: MapPOIItem?, p2: MapPoint?
+                        ) {
+
                         }
                     })
                 }
