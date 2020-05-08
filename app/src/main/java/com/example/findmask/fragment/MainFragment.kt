@@ -16,6 +16,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.RelativeLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -50,6 +51,8 @@ class MainFragment : Fragment() {
         var view = inflater.inflate(R.layout.fragment_main, container, false);
 
         var map = view.findViewById<RelativeLayout>(R.id.map_view)
+        var clear = view.findViewById<ImageView>(R.id.clear)
+        var centerPoint = view.findViewById<ImageView>(R.id.centerPoint)
         val activity = activity
         initService()
 
@@ -71,7 +74,9 @@ class MainFragment : Fragment() {
 
                     var g: Geocoder = Geocoder(activity.applicationContext)
 
-
+                    clear.setOnClickListener {
+                        mask_cardView.visibility = View.GONE
+                    }
 
                     val mapView = MapView(activity)
 
@@ -101,10 +106,11 @@ class MainFragment : Fragment() {
                     mapView.addPOIItem(marker)
                     mapView.addCircle(circle)
 
-                    var markerr = MapPOIItem()
+                    centerPoint.setOnClickListener {
+                        mapView.setMapCenterPoint(MapPoint.mapPointWithGeoCoord(latitude, longitude), true)
+                    }
 
-
-                    maskService!!.getStoreByGeoInfo(latitude, longitude, 500).enqueue(object :
+                    maskService!!.getStoreByGeoInfo(latitude, longitude, 5000).enqueue(object :
                         Callback<MaskByGeoInfo> {
                         override fun onFailure(call: Call<MaskByGeoInfo>, t: Throwable) {
                             Log.d("error",t.toString())
@@ -116,26 +122,56 @@ class MainFragment : Fragment() {
                         ) {
                             for(i in 0 until response.body()!!.count) {
                                 var marker = MapPOIItem()
-                                markerr.itemName = response.body()!!.stores[i].name
-                                markerr.mapPoint = MapPoint.mapPointWithGeoCoord(response.body()!!.stores[i].lat.toDouble(),
-                                    response.body()!!.stores[i].lng.toDouble())
-                                markerr.customImageResourceId = R.drawable.baseline_room_black_36dp
+                                var remain_stat: String
                                 if (response.body()!!.stores[i].remain_stat == "plenty") {
-                                    markerr.markerType = MapPOIItem.MarkerType.BluePin
+                                    marker.markerType = MapPOIItem.MarkerType.BluePin
+                                    remain_stat = "충분"
                                 }
                                 else if (response.body()!!.stores[i].remain_stat == "some") {
-                                    markerr.markerType = MapPOIItem.MarkerType.YellowPin
+                                    marker.markerType = MapPOIItem.MarkerType.YellowPin
+                                    remain_stat = "보통"
                                 }
                                 else if (response.body()!!.stores[i].remain_stat == "few") {
-                                    markerr.markerType = MapPOIItem.MarkerType.RedPin
+                                    marker.markerType = MapPOIItem.MarkerType.RedPin
+                                    remain_stat = "부족"
                                 }
                                 else if (response.body()!!.stores[i].remain_stat == "empty") {
-                                    markerr.markerType = MapPOIItem.MarkerType.CustomImage
+                                    marker.markerType = MapPOIItem.MarkerType.CustomImage
+                                    remain_stat = "없음"
                                 }
                                 else {
-                                    markerr.markerType = MapPOIItem.MarkerType.CustomImage
+                                    marker.markerType = MapPOIItem.MarkerType.CustomImage
+                                    remain_stat = "판매중지"
                                 }
-                                mapView.addPOIItem(markerr)
+                                marker.itemName = remain_stat + " / " + response.body()!!.stores[i].name
+                                marker.mapPoint = MapPoint.mapPointWithGeoCoord(response.body()!!.stores[i].lat.toDouble(),
+                                    response.body()!!.stores[i].lng.toDouble())
+                                marker.customImageResourceId = R.drawable.baseline_room_black_36dp
+
+                                mapView.addPOIItem(marker)
+                                mapView.setPOIItemEventListener(object : MapView.POIItemEventListener{
+                                    override fun onPOIItemSelected(p0: MapView?, p1: MapPOIItem?) {
+                                        storeName.text = p1!!.itemName
+                                        Log.d("markerClick", "" + p1.itemName)
+
+                                        moreInfo.visibility = View.VISIBLE
+                                    }
+
+                                    override fun onCalloutBalloonOfPOIItemTouched(p0: MapView?, p1: MapPOIItem?
+                                    ) {
+
+                                    }
+
+                                    override fun onCalloutBalloonOfPOIItemTouched(p0: MapView?, p1: MapPOIItem?, p2: MapPOIItem.CalloutBalloonButtonType?
+                                    ) {
+
+                                    }
+
+                                    override fun onDraggablePOIItemMoved(p0: MapView?, p1: MapPOIItem?, p2: MapPoint?
+                                    ) {
+
+                                    }
+                                })
                             }
 
 
@@ -157,35 +193,12 @@ class MainFragment : Fragment() {
 //                                locationListener)
                         }
                     })
-                    mapView.setPOIItemEventListener(object : MapView.POIItemEventListener{
-                        override fun onPOIItemSelected(p0: MapView?, p1: MapPOIItem?) {
-                            storeName.text = p1!!.itemName
-                            Log.d("markerClick", "" + p1.itemName)
 
-                            moreInfo.visibility = View.VISIBLE
-                        }
-
-                        override fun onCalloutBalloonOfPOIItemTouched(p0: MapView?, p1: MapPOIItem?
-                        ) {
-
-                        }
-
-                        override fun onCalloutBalloonOfPOIItemTouched(p0: MapView?, p1: MapPOIItem?, p2: MapPOIItem.CalloutBalloonButtonType?
-                        ) {
-
-                        }
-
-                        override fun onDraggablePOIItemMoved(p0: MapView?, p1: MapPOIItem?, p2: MapPoint?
-                        ) {
-
-                        }
-                    })
                 }
             }
             catch (e: SecurityException) {
                 e.printStackTrace()
             }
-
 
         return view
     }
