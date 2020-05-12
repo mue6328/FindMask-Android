@@ -14,9 +14,9 @@
         android:title="코로나 정보"/>
 
     <item
-        android:id="@+id/action_3"
+        android:id="@+id/action_MoreInfo"
         android:enabled="true"
-        android:title="3"/>
+        android:title="판매처 상세정보"/>
 
 
 </menu>

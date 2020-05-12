@@ -94,7 +94,6 @@ class MainFragment : Fragment() {
                     marker.customImageResourceId = R.drawable.baseline_room_black_36dp
                     marker.markerType = MapPOIItem.MarkerType.CustomImage
                     marker.selectedMarkerType = MapPOIItem.MarkerType.RedPin
-                    //MapPOIItem.MarkerType
 
                     var circle = MapCircle(
                         MapPoint.mapPointWithGeoCoord(latitude, longitude),
@@ -110,7 +109,7 @@ class MainFragment : Fragment() {
                         mapView.setMapCenterPoint(MapPoint.mapPointWithGeoCoord(latitude, longitude), true)
                     }
 
-                    maskService!!.getStoreByGeoInfo(latitude, longitude, 5000).enqueue(object :
+                    maskService!!.getStoreByGeoInfo(latitude, longitude, 500).enqueue(object :
                         Callback<MaskByGeoInfo> {
                         override fun onFailure(call: Call<MaskByGeoInfo>, t: Throwable) {
                             Log.d("error",t.toString())
@@ -149,29 +148,6 @@ class MainFragment : Fragment() {
                                 marker.customImageResourceId = R.drawable.baseline_room_black_36dp
 
                                 mapView.addPOIItem(marker)
-                                mapView.setPOIItemEventListener(object : MapView.POIItemEventListener{
-                                    override fun onPOIItemSelected(p0: MapView?, p1: MapPOIItem?) {
-                                        storeName.text = p1!!.itemName
-                                        Log.d("markerClick", "" + p1.itemName)
-
-                                        moreInfo.visibility = View.VISIBLE
-                                    }
-
-                                    override fun onCalloutBalloonOfPOIItemTouched(p0: MapView?, p1: MapPOIItem?
-                                    ) {
-
-                                    }
-
-                                    override fun onCalloutBalloonOfPOIItemTouched(p0: MapView?, p1: MapPOIItem?, p2: MapPOIItem.CalloutBalloonButtonType?
-                                    ) {
-
-                                    }
-
-                                    override fun onDraggablePOIItemMoved(p0: MapView?, p1: MapPOIItem?, p2: MapPoint?
-                                    ) {
-
-                                    }
-                                })
                             }
 
 

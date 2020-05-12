@@ -31,3 +31,10 @@ data class StoreSale(
     var stock_at: String,
     var type: String
 )
+
+data class MoreInfo(
+    var name: String,
+    var remain_stat: String,
+    var stock_at: String,
+    var created_at: String
+)

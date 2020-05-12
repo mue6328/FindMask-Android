@@ -1,40 +1,22 @@
 package com.example.findmask.activity
 
-import android.content.Context
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
-import android.content.pm.Signature
 import android.location.Location
 import android.location.LocationListener
-import android.location.LocationManager
-import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Base64
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
-import android.view.ViewGroup
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import com.example.findmask.R
-import com.example.findmask.Utils
 import com.example.findmask.fragment.CoronaFragment
-import com.example.findmask.fragment.Fragment3
+import com.example.findmask.fragment.FragmentMoreInfo
 import com.example.findmask.fragment.MainFragment
-import com.example.findmask.model.CoronaInfo
-import com.example.findmask.model.MaskByGeoInfo
 import com.example.findmask.service.CoronaService
 import com.example.findmask.service.MaskService
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.android.material.navigation.NavigationView
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.fragment_main.*
-import net.daum.mf.map.api.MapView
-import okhttp3.internal.Util
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 
@@ -44,7 +26,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
 
     private val mainFragment = MainFragment()
     private val coronaFragment = CoronaFragment()
-    private val fragment3 = Fragment3()
+    private val fragment3 = FragmentMoreInfo()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -110,7 +92,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
             R.id.action_corona -> {
                 supportFragmentManager.beginTransaction().replace(R.id.frameLayout, coronaFragment).commit()
             }
-            R.id.action_3 -> {
+            R.id.action_MoreInfo -> {
                 supportFragmentManager.beginTransaction().replace(R.id.frameLayout, fragment3).commit()
             }
         }
