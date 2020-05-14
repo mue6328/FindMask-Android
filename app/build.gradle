@@ -16,6 +16,11 @@ android {
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
+
+    repositories {
+        maven {url "https://jitpack.io"}
+    }
+    
     buildTypes {
         release {
             minifyEnabled false
@@ -34,6 +39,7 @@ dependencies {
     implementation 'com.squareup.retrofit2:retrofit:2.6.0'
     implementation 'com.google.android.material:material:1.2.0-alpha06'
     implementation 'com.squareup.retrofit2:converter-gson:2.6.0'
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'

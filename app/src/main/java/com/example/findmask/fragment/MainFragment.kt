@@ -7,6 +7,7 @@ import android.content.pm.PackageManager
 import android.graphics.Color
 import android.location.Geocoder
 import android.location.Location
+import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
@@ -18,6 +19,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.RelativeLayout
+import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getSystemService
@@ -91,25 +93,16 @@ class MainFragment : Fragment() {
                     var marker = MapPOIItem()
                     marker.itemName = "현재 위치"
                     marker.mapPoint = MapPoint.mapPointWithGeoCoord(latitude, longitude)
-                    marker.customImageResourceId = R.drawable.baseline_room_black_36dp
+                    marker.customImageResourceId = R.drawable.baseline_fiber_manual_record_black_24dp
                     marker.markerType = MapPOIItem.MarkerType.CustomImage
-                    marker.selectedMarkerType = MapPOIItem.MarkerType.RedPin
-
-                    var circle = MapCircle(
-                        MapPoint.mapPointWithGeoCoord(latitude, longitude),
-                        500,
-                        Color.argb(128, 0, 0, 0),
-                        Color.argb(64, 0, 255, 255)
-                    )
 
                     mapView.addPOIItem(marker)
-                    mapView.addCircle(circle)
 
                     centerPoint.setOnClickListener {
                         mapView.setMapCenterPoint(MapPoint.mapPointWithGeoCoord(latitude, longitude), true)
                     }
 
-                    maskService!!.getStoreByGeoInfo(latitude, longitude, 500).enqueue(object :
+                    maskService!!.getStoreByGeoInfo(latitude, longitude, 5000).enqueue(object :
                         Callback<MaskByGeoInfo> {
                         override fun onFailure(call: Call<MaskByGeoInfo>, t: Throwable) {
                             Log.d("error",t.toString())
@@ -119,38 +112,72 @@ class MainFragment : Fragment() {
                             call: Call<MaskByGeoInfo>,
                             response: Response<MaskByGeoInfo>
                         ) {
-                            for(i in 0 until response.body()!!.count) {
+                            for (i in 0 until response.body()!!.count) {
                                 var marker = MapPOIItem()
                                 var remain_stat: String
                                 if (response.body()!!.stores[i].remain_stat == "plenty") {
                                     marker.markerType = MapPOIItem.MarkerType.BluePin
                                     remain_stat = "충분"
-                                }
-                                else if (response.body()!!.stores[i].remain_stat == "some") {
+                                } else if (response.body()!!.stores[i].remain_stat == "some") {
                                     marker.markerType = MapPOIItem.MarkerType.YellowPin
                                     remain_stat = "보통"
-                                }
-                                else if (response.body()!!.stores[i].remain_stat == "few") {
+                                } else if (response.body()!!.stores[i].remain_stat == "few") {
                                     marker.markerType = MapPOIItem.MarkerType.RedPin
                                     remain_stat = "부족"
-                                }
-                                else if (response.body()!!.stores[i].remain_stat == "empty") {
+                                } else if (response.body()!!.stores[i].remain_stat == "empty") {
                                     marker.markerType = MapPOIItem.MarkerType.CustomImage
                                     remain_stat = "없음"
-                                }
-                                else {
+                                } else {
                                     marker.markerType = MapPOIItem.MarkerType.CustomImage
                                     remain_stat = "판매중지"
                                 }
-                                marker.itemName = remain_stat + " / " + response.body()!!.stores[i].name
-                                marker.mapPoint = MapPoint.mapPointWithGeoCoord(response.body()!!.stores[i].lat.toDouble(),
-                                    response.body()!!.stores[i].lng.toDouble())
+                                marker.itemName =
+                                    remain_stat + " / " + response.body()!!.stores[i].name
+                                marker.mapPoint = MapPoint.mapPointWithGeoCoord(
+                                    response.body()!!.stores[i].lat.toDouble(),
+                                    response.body()!!.stores[i].lng.toDouble()
+                                )
                                 marker.customImageResourceId = R.drawable.baseline_room_black_36dp
 
                                 mapView.addPOIItem(marker)
                             }
+                        }
+                        })
 
+                            val locationListener: LocationListener = object : LocationListener {
+                                override fun onLocationChanged(location: Location?) {
+                                    var longitude = location!!.longitude
+                                    var latitude = location!!.latitude
 
+                                    Log.d("위도, 경도: ",  "" + latitude + longitude)
+//                                    Toast.makeText(context, "위도, 경도: " + latitude + " " + longitude, Toast.LENGTH_SHORT).show()
+                                    marker.mapPoint = MapPoint.mapPointWithGeoCoord(latitude, longitude)
+                                }
+
+                                override fun onStatusChanged(p0: String?, p1: Int, p2: Bundle?) {
+
+                                }
+
+                                override fun onProviderEnabled(p0: String?) {
+
+                                }
+
+                                override fun onProviderDisabled(p0: String?) {
+
+                                }
+
+                            }
+
+                    lm.requestLocationUpdates(
+                        LocationManager.GPS_PROVIDER,
+                        1000,
+                        1.0f,
+                        locationListener)
+                    lm.requestLocationUpdates(
+                        LocationManager.NETWORK_PROVIDER,
+                        1000,
+                        1.0f,
+                        locationListener)
 
 //                            gpsTest.setText(
 //                                response.body().toString() + response.code() + response.message() +
@@ -168,9 +195,6 @@ class MainFragment : Fragment() {
 //                                1.0f,
 //                                locationListener)
                         }
-                    })
-
-                }
             }
             catch (e: SecurityException) {
                 e.printStackTrace()

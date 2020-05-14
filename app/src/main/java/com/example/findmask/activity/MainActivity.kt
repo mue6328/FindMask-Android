@@ -57,32 +57,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         }
     }
 
-    private val locationListener: LocationListener = object : LocationListener {
-        override fun onLocationChanged(location: Location?) {
-            var provider = location!!.provider
-            var longitude = location!!.longitude
-            var latitude = location!!.latitude
-            var altitude = location!!.altitude
 
-//            gpsTest.setText(
-//                    "위도: " + longitude + "\n" +
-//                    "경도: " + latitude + "\n" +
-//                    "고도: " + altitude)
-        }
-
-        override fun onStatusChanged(p0: String?, p1: Int, p2: Bundle?) {
-            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-        }
-
-        override fun onProviderEnabled(p0: String?) {
-            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-        }
-
-        override fun onProviderDisabled(p0: String?) {
-            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-        }
-
-    }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when(item.itemId) {
