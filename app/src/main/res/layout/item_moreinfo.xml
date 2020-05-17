@@ -45,7 +45,7 @@
             android:id="@+id/remain_stat"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="#32CD32"
+            android:textColor="#808080"
             android:textSize="18dp"
             android:textStyle="bold"
             android:text="충분"

@@ -26,24 +26,24 @@ class MoreInfoAdapter : RecyclerView.Adapter<MoreInfoAdapter.Holder>() {
     override fun onBindViewHolder(holder: Holder, position: Int) {
         holder.storeName.text = storeSale[position].name
         if (storeSale[position].remain_stat == "plenty") {
-            holder.remain_stat.text = "충분"
+            holder.remain_stat.text = "100개 이상"
             holder.remain_stat.setTextColor(Color.parseColor("#32CD32"))
         }
         else if(storeSale[position].remain_stat == "some") {
-            holder.remain_stat.text = "보통"
-            holder.remain_stat.setTextColor(Color.parseColor("#000000"))
+            holder.remain_stat.text = "30~99개"
+            holder.remain_stat.setTextColor(Color.parseColor("#ff7f00"))
         }
         else if(storeSale[position].remain_stat == "few") {
-            holder.remain_stat.text = "부족"
-            holder.remain_stat.setTextColor(Color.parseColor("#000000"))
+            holder.remain_stat.text = "2~29개"
+            holder.remain_stat.setTextColor(Color.parseColor("#ff0000"))
         }
         else if(storeSale[position].remain_stat == "empty") {
-            holder.remain_stat.text = "없음"
+            holder.remain_stat.text = "0~1개"
             holder.remain_stat.setTextColor(Color.parseColor("#000000"))
         }
         else if(storeSale[position].remain_stat == "break") {
             holder.remain_stat.text = "판매중지"
-            holder.remain_stat.setTextColor(Color.parseColor("#000000"))
+            holder.remain_stat.setTextColor(Color.parseColor("#808080"))
         }
 
         holder.create_at.text = storeSale[position].created_at

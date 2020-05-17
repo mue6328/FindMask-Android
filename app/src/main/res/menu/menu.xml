@@ -16,6 +16,7 @@
     <item
         android:id="@+id/action_MoreInfo"
         android:enabled="true"
+        android:icon="@drawable/baseline_info_black_24dp"
         android:title="판매처 상세정보"/>
 
 

@@ -48,6 +48,13 @@ class MainFragment : Fragment() {
 
    // private var gpstracker: GpsTracker
 
+    private var mcontext: Context? = null
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        mcontext = context
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         var view = inflater.inflate(R.layout.fragment_main, container, false);
@@ -146,12 +153,19 @@ class MainFragment : Fragment() {
 
                             val locationListener: LocationListener = object : LocationListener {
                                 override fun onLocationChanged(location: Location?) {
-                                    var longitude = location!!.longitude
-                                    var latitude = location!!.latitude
+                                    if (location != null) {
+                                        var longitude = location!!.longitude
+                                        var latitude = location!!.latitude
+                                        Log.d("위도, 경도: ",  "" + latitude + longitude)
+                                        Toast.makeText(mcontext, "위도, 경도: " + latitude + " " + longitude, Toast.LENGTH_SHORT).show()
+                                        mapView.removePOIItem(marker)
 
-                                    Log.d("위도, 경도: ",  "" + latitude + longitude)
-//                                    Toast.makeText(context, "위도, 경도: " + latitude + " " + longitude, Toast.LENGTH_SHORT).show()
-                                    marker.mapPoint = MapPoint.mapPointWithGeoCoord(latitude, longitude)
+                                        marker.mapPoint = MapPoint.mapPointWithGeoCoord(latitude, longitude)
+
+                                        mapView.addPOIItem(marker)
+                                    }
+
+
                                 }
 
                                 override fun onStatusChanged(p0: String?, p1: Int, p2: Bundle?) {
@@ -171,12 +185,12 @@ class MainFragment : Fragment() {
                     lm.requestLocationUpdates(
                         LocationManager.GPS_PROVIDER,
                         1000,
-                        1.0f,
+                        1f,
                         locationListener)
                     lm.requestLocationUpdates(
                         LocationManager.NETWORK_PROVIDER,
                         1000,
-                        1.0f,
+                        1f,
                         locationListener)
 
 //                            gpsTest.setText(
@@ -196,7 +210,7 @@ class MainFragment : Fragment() {
 //                                locationListener)
                         }
             }
-            catch (e: SecurityException) {
+            catch (e: Exception) {
                 e.printStackTrace()
             }
 
