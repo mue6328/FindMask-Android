@@ -80,10 +80,16 @@ class FragmentMoreInfo : Fragment() {
                         response: Response<MaskByGeoInfo>
                     ) {
                         for (i in 0 until response.body()!!.count) {
-                            moreInfoList.add(MoreInfo(response.body()!!.stores[i].name, response.body()!!.stores[i].remain_stat,
-                                response.body()!!.stores[i].stock_at, response.body()!!.stores[i].created_at))
+                            moreInfoList.add(
+                                MoreInfo(
+                                    response.body()!!.stores[i].name,
+                                    response.body()!!.stores[i].remain_stat,
+                                    response.body()!!.stores[i].stock_at,
+                                    response.body()!!.stores[i].created_at
+                                )
+                            )
                         }
-                        moreInfoAdapter.setItem(moreInfoList)
+                            moreInfoAdapter.setItem(moreInfoList, response.body()!!.count)
 
 //                            gpsTest.setText(
 //                                response.body().toString() + response.code() + response.message() +

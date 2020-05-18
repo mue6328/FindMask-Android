@@ -14,9 +14,10 @@ class MoreInfoAdapter : RecyclerView.Adapter<MoreInfoAdapter.Holder>() {
 
     private var storeSale: List<MoreInfo> = ArrayList()
 
-    fun setItem(list: List<MoreInfo>) {
-        this.storeSale = list
-        notifyDataSetChanged()
+    fun setItem(list: List<MoreInfo>, size: Int) {
+            storeSale = ArrayList(size)
+            this.storeSale = list
+            notifyDataSetChanged()
     }
 
     override fun getItemCount(): Int {

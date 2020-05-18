@@ -105,9 +105,7 @@ class MainFragment : Fragment() {
 
                     mapView.addPOIItem(marker)
 
-                    centerPoint.setOnClickListener {
-                        mapView.setMapCenterPoint(MapPoint.mapPointWithGeoCoord(latitude, longitude), true)
-                    }
+
 
                     maskService!!.getStoreByGeoInfo(latitude, longitude, 5000).enqueue(object :
                         Callback<MaskByGeoInfo> {
@@ -154,8 +152,8 @@ class MainFragment : Fragment() {
                             val locationListener: LocationListener = object : LocationListener {
                                 override fun onLocationChanged(location: Location?) {
                                     if (location != null) {
-                                        var longitude = location!!.longitude
-                                        var latitude = location!!.latitude
+                                        longitude = location!!.longitude
+                                        latitude = location!!.latitude
                                         Log.d("위도, 경도: ",  "" + latitude + longitude)
                                         Toast.makeText(mcontext, "위도, 경도: " + latitude + " " + longitude, Toast.LENGTH_SHORT).show()
                                         mapView.removePOIItem(marker)
@@ -192,6 +190,10 @@ class MainFragment : Fragment() {
                         1000,
                         1f,
                         locationListener)
+
+                    centerPoint.setOnClickListener {
+                        mapView.setMapCenterPoint(MapPoint.mapPointWithGeoCoord(latitude, longitude), true)
+                    }
 
 //                            gpsTest.setText(
 //                                response.body().toString() + response.code() + response.message() +

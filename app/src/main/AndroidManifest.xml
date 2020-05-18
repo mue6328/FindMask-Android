@@ -10,16 +10,15 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-
-
-        <activity android:name=".activity.MainActivity">
-
+        <activity android:name=".activity.LoadingActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity android:name=".activity.MainActivity"/>
         <meta-data android:name="com.kakao.sdk.AppKey" android:value="c55d0a6ff670947af2690d8cf6455b95"/>
     </application>
 
