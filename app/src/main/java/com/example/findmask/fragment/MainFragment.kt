@@ -95,7 +95,7 @@ class MainFragment : Fragment() {
 
                     mapViewContainer.addView(mapView)
 
-                    Log.d("gps", "위도: " + latitude + " 경도: " + longitude + g.getFromLocation(latitude, longitude, 10))
+                    //Log.d("gps", "위도: " + latitude + " 경도: " + longitude + g.getFromLocation(latitude, longitude, 10))
 
                     var marker = MapPOIItem()
                     marker.itemName = "현재 위치"
@@ -154,8 +154,8 @@ class MainFragment : Fragment() {
                                     if (location != null) {
                                         longitude = location!!.longitude
                                         latitude = location!!.latitude
-                                        Log.d("위도, 경도: ",  "" + latitude + longitude)
-                                        Toast.makeText(mcontext, "위도, 경도: " + latitude + " " + longitude, Toast.LENGTH_SHORT).show()
+//                                        Log.d("위도, 경도: ",  "" + latitude + longitude)
+//                                        Toast.makeText(mcontext, "위도, 경도: " + latitude + " " + longitude, Toast.LENGTH_SHORT).show()
                                         mapView.removePOIItem(marker)
 
                                         marker.mapPoint = MapPoint.mapPointWithGeoCoord(latitude, longitude)

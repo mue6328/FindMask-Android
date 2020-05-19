@@ -21,12 +21,9 @@ import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 
 class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemSelectedListener {
-    private var maskService: MaskService? = null
-    private var coronaService: CoronaService? = null
-
     private val mainFragment = MainFragment()
     private val coronaFragment = CoronaFragment()
-    private val fragment3 = FragmentMoreInfo()
+    private val fragmentMoreInfo = FragmentMoreInfo()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,7 +32,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         var bottomNavigationView = findViewById<View>(R.id.bottom_Navi) as BottomNavigationView
         bottomNavigationView.setOnNavigationItemSelectedListener(this)
 
-        getHashKey()
+        //getHashKey()
 
         supportFragmentManager.beginTransaction().replace(R.id.frameLayout, mainFragment).commit()
     }
@@ -68,7 +65,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
                 supportFragmentManager.beginTransaction().replace(R.id.frameLayout, coronaFragment).commit()
             }
             R.id.action_MoreInfo -> {
-                supportFragmentManager.beginTransaction().replace(R.id.frameLayout, fragment3).commit()
+                supportFragmentManager.beginTransaction().replace(R.id.frameLayout, fragmentMoreInfo).commit()
             }
         }
         return true
