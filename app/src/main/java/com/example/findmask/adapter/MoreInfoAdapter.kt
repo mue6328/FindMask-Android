@@ -9,14 +9,17 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.findmask.R
 import com.example.findmask.model.MoreInfo
 import com.example.findmask.model.StoreSale
+import java.util.*
 
 class MoreInfoAdapter : RecyclerView.Adapter<MoreInfoAdapter.Holder>() {
 
-    private var storeSale: List<MoreInfo> = ArrayList()
+    private var storeSale: ArrayList<MoreInfo> = ArrayList()
 
-    fun setItem(list: List<MoreInfo>, size: Int) {
-            storeSale = ArrayList(size)
+    private var storelist = ArrayList<MoreInfo>()
+
+    fun setItem(list: ArrayList<MoreInfo>) {
             this.storeSale = list
+            this.storelist.addAll(storeSale)
             notifyDataSetChanged()
     }
 
@@ -62,6 +65,22 @@ class MoreInfoAdapter : RecyclerView.Adapter<MoreInfoAdapter.Holder>() {
         var remain_stat = itemView.findViewById<TextView>(R.id.remain_stat)
         var create_at = itemView.findViewById<TextView>(R.id.created_at)
         var stock_at = itemView.findViewById<TextView>(R.id.stock_at)
+    }
+
+    fun filter(text: String) {
+        var charText = text.toLowerCase(Locale.getDefault())
+        storeSale.clear()
+        if (charText.length == 0) {
+            storeSale.addAll(storelist)
+        } else {
+            for (moreinfo : MoreInfo in storelist) {
+                var name = moreinfo.name
+                if (name.toLowerCase().contains(charText)) {
+                    storeSale.add(moreinfo)
+                }
+            }
+        }
+        notifyDataSetChanged()
     }
 
 

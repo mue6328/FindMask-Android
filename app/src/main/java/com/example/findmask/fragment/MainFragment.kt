@@ -65,6 +65,9 @@ class MainFragment : Fragment() {
         val activity = activity
         initService()
 
+        clear.setOnClickListener {
+            mask_cardView.visibility = View.GONE
+        }
 
             try {
                 val lm : LocationManager? = activity!!.getSystemService(Context.LOCATION_SERVICE) as LocationManager
@@ -78,14 +81,17 @@ class MainFragment : Fragment() {
                 }
                 else {
                     location = lm!!.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
+                    // 에뮬레이터 테스트
+//                    var longitude = 127.0342169
+//                    var latitude = 37.5010881
+
+                    // 휴대폰
                     var longitude = location!!.longitude
                     var latitude = location!!.latitude
 
                     var g: Geocoder = Geocoder(activity.applicationContext)
 
-                    clear.setOnClickListener {
-                        mask_cardView.visibility = View.GONE
-                    }
+
 
                     val mapView = MapView(activity)
 
