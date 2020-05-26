@@ -46,8 +46,6 @@ class MainFragment : Fragment() {
 
     private var maskService: MaskService? = null
 
-   // private var gpstracker: GpsTracker
-
     private var mcontext: Context? = null
 
     override fun onAttach(context: Context) {
@@ -62,8 +60,14 @@ class MainFragment : Fragment() {
         var map = view.findViewById<RelativeLayout>(R.id.map_view)
         var clear = view.findViewById<ImageView>(R.id.clear)
         var centerPoint = view.findViewById<ImageView>(R.id.centerPoint)
+
         val activity = activity
+
+        var shopMarker = MapPOIItem()
+        var remain_stat: String
         initService()
+
+
 
         clear.setOnClickListener {
             mask_cardView.visibility = View.GONE
@@ -89,10 +93,6 @@ class MainFragment : Fragment() {
                     var longitude = location!!.longitude
                     var latitude = location!!.latitude
 
-                    var g: Geocoder = Geocoder(activity.applicationContext)
-
-
-
                     val mapView = MapView(activity)
 
                     val mapViewContainer = map as ViewGroup
@@ -101,17 +101,11 @@ class MainFragment : Fragment() {
 
                     mapViewContainer.addView(mapView)
 
-                    //Log.d("gps", "위도: " + latitude + " 경도: " + longitude + g.getFromLocation(latitude, longitude, 10))
-
                     var marker = MapPOIItem()
                     marker.itemName = "현재 위치"
                     marker.mapPoint = MapPoint.mapPointWithGeoCoord(latitude, longitude)
                     marker.customImageResourceId = R.drawable.baseline_fiber_manual_record_black_24dp
                     marker.markerType = MapPOIItem.MarkerType.CustomImage
-
-                    mapView.addPOIItem(marker)
-
-
 
                     maskService!!.getStoreByGeoInfo(latitude, longitude, 5000).enqueue(object :
                         Callback<MaskByGeoInfo> {
@@ -124,33 +118,34 @@ class MainFragment : Fragment() {
                             response: Response<MaskByGeoInfo>
                         ) {
                             for (i in 0 until response.body()!!.count) {
-                                var marker = MapPOIItem()
-                                var remain_stat: String
+
+
                                 if (response.body()!!.stores[i].remain_stat == "plenty") {
-                                    marker.markerType = MapPOIItem.MarkerType.BluePin
+                                    shopMarker.markerType = MapPOIItem.MarkerType.BluePin
                                     remain_stat = "충분"
                                 } else if (response.body()!!.stores[i].remain_stat == "some") {
-                                    marker.markerType = MapPOIItem.MarkerType.YellowPin
+                                    shopMarker.markerType = MapPOIItem.MarkerType.YellowPin
                                     remain_stat = "보통"
                                 } else if (response.body()!!.stores[i].remain_stat == "few") {
-                                    marker.markerType = MapPOIItem.MarkerType.RedPin
+                                    shopMarker.markerType = MapPOIItem.MarkerType.RedPin
                                     remain_stat = "부족"
                                 } else if (response.body()!!.stores[i].remain_stat == "empty") {
-                                    marker.markerType = MapPOIItem.MarkerType.CustomImage
+                                    shopMarker.markerType = MapPOIItem.MarkerType.CustomImage
                                     remain_stat = "없음"
                                 } else {
-                                    marker.markerType = MapPOIItem.MarkerType.CustomImage
+                                    shopMarker.markerType = MapPOIItem.MarkerType.CustomImage
                                     remain_stat = "판매중지"
                                 }
-                                marker.itemName =
+
+                                shopMarker.itemName =
                                     remain_stat + " / " + response.body()!!.stores[i].name
-                                marker.mapPoint = MapPoint.mapPointWithGeoCoord(
+                                shopMarker.mapPoint = MapPoint.mapPointWithGeoCoord(
                                     response.body()!!.stores[i].lat.toDouble(),
                                     response.body()!!.stores[i].lng.toDouble()
                                 )
-                                marker.customImageResourceId = R.drawable.baseline_room_black_36dp
+                                shopMarker.customImageResourceId = R.drawable.baseline_room_black_36dp
 
-                                mapView.addPOIItem(marker)
+                                mapView.addPOIItem(shopMarker)
                             }
                         }
                         })
@@ -160,12 +155,10 @@ class MainFragment : Fragment() {
                                     if (location != null) {
                                         longitude = location!!.longitude
                                         latitude = location!!.latitude
-//                                        Log.d("위도, 경도: ",  "" + latitude + longitude)
-//                                        Toast.makeText(mcontext, "위도, 경도: " + latitude + " " + longitude, Toast.LENGTH_SHORT).show()
+
                                         mapView.removePOIItem(marker)
 
                                         marker.mapPoint = MapPoint.mapPointWithGeoCoord(latitude, longitude)
-
                                         mapView.addPOIItem(marker)
                                     }
 
@@ -200,22 +193,6 @@ class MainFragment : Fragment() {
                     centerPoint.setOnClickListener {
                         mapView.setMapCenterPoint(MapPoint.mapPointWithGeoCoord(latitude, longitude), true)
                     }
-
-//                            gpsTest.setText(
-//                                response.body().toString() + response.code() + response.message() +
-//                                "위도: " + longitude + "\n" +
-//                                        "경도: " + latitude)
-
-//                            lm.requestLocationUpdates(
-//                                LocationManager.GPS_PROVIDER,
-//                                1000,
-//                                1.0f,
-//                                locationListener)
-//                            lm.requestLocationUpdates(
-//                                LocationManager.NETWORK_PROVIDER,
-//                                1000,
-//                                1.0f,
-//                                locationListener)
                         }
             }
             catch (e: Exception) {
@@ -230,5 +207,4 @@ class MainFragment : Fragment() {
     private fun initService() {
         maskService = Utils.retrofit_MASK.create(MaskService::class.java)
     }
-
 }

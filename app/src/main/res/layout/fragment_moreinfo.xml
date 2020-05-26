@@ -24,7 +24,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="8dp"
-                    android:hint="찾고 싶은 병원 명을 입력하세요."
+                    android:hint="찾고 싶은 병원 명을 입력하세요. (반경 500m)"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 

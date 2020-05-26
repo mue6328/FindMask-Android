@@ -37,7 +37,6 @@ class CoronaFragment : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-
         var view = inflater.inflate(R.layout.fragment_corona, container, false)
         initService()
 
@@ -51,14 +50,11 @@ class CoronaFragment : Fragment() {
         var todayDeath = view.findViewById<TextView>(R.id.todayDeath)
 
         var pieChart = view.findViewById<PieChart>(R.id.pieChart)
+        var description = Description()
 
         var entry = ArrayList<PieEntry>()
 
-        colors.add(Color.rgb(80, 188, 223))
-        colors.add(Color.rgb(211, 211, 211))
-        colors.add(Color.GRAY)
-        colors.add(Color.DKGRAY)
-        colors.add(Color.LTGRAY)
+        addColors()
 
             coronaService!!.getCoronaInfo(Utils.API_KEY).enqueue(object : Callback<CoronaInfo> {
                 override fun onFailure(call: Call<CoronaInfo>, t: Throwable) {
@@ -67,13 +63,8 @@ class CoronaFragment : Fragment() {
 
                 override fun onResponse(call: Call<CoronaInfo>, response: Response<CoronaInfo>) {
                     if (response.body() != null) {
-                        Log.d("Corona", response.body().toString())
-                        pieChart.setUsePercentValues(true)
-                        pieChart.setExtraOffsets(5f,10f,5f,5f)
-
-                        pieChart.isDrawHoleEnabled = false
-                        pieChart.setHoleColor(Color.WHITE)
-                        pieChart.transparentCircleRadius = 61f
+                        Log.d("nowcase", response.body()!!.TotalCaseBefore)
+                        setPieChart(pieChart, description)
 
                         entry.add(PieEntry(response.body()!!.city1p.toFloat(), response.body()!!.city1n))
                         entry.add(PieEntry(response.body()!!.city2p.toFloat(), response.body()!!.city2n))
@@ -81,20 +72,13 @@ class CoronaFragment : Fragment() {
                         entry.add(PieEntry(response.body()!!.city4p.toFloat(), response.body()!!.city4n))
                         entry.add(PieEntry(response.body()!!.city5p.toFloat(), response.body()!!.city5n))
 
-                        var description = Description()
-                        description.text = "시도 별 확진자 현황(%)"
-                        description.textSize = 12f
-                        pieChart.description = description
-
                         var dataset = PieDataSet(entry, "")
 
-                        dataset.setColors(colors)
+                        dataset.colors = colors
 
                         var pieData = PieData(dataset)
                         pieData.setValueTextSize(10f)
-                        pieChart.animateXY(1000, 1000)
                         pieChart.data = pieData
-
 
                         var nowCase = response.body()!!.TotalCaseBefore.toInt()
 
@@ -104,7 +88,7 @@ class CoronaFragment : Fragment() {
                         totalDeath.text = response.body()!!.TotalDeath + " 명"
 
                         todayRecovered.text = "전일 대비 + " + response.body()!!.TodayRecovered + "명"
-                        todayNowCase.text = "전일 대비 - " + -nowCase + "명"
+                        todayNowCase.text = "전일 대비 - " + nowCase + "명"
                         todayDeath.text = "전일 대비 + " + response.body()!!.TodayDeath + "명"
                     }
                 }
@@ -115,5 +99,28 @@ class CoronaFragment : Fragment() {
 
     private fun initService() {
         coronaService = Utils.retrofit_CORONA.create(CoronaService::class.java)
+    }
+
+    private fun addColors() {
+        colors.add(Color.rgb(80, 188, 223))
+        colors.add(Color.rgb(211, 211, 211))
+        colors.add(Color.GRAY)
+        colors.add(Color.DKGRAY)
+        colors.add(Color.LTGRAY)
+    }
+
+    private fun setPieChart(pieChart: PieChart, description: Description) {
+        pieChart.setUsePercentValues(true)
+        pieChart.setExtraOffsets(5f,10f,5f,5f)
+
+        pieChart.isDrawHoleEnabled = false
+        pieChart.setHoleColor(Color.WHITE)
+        pieChart.transparentCircleRadius = 61f
+
+        description.text = "시도 별 확진자 현황(%)"
+        description.textSize = 12f
+        pieChart.description = description
+
+        pieChart.animateXY(1000, 1000)
     }
 }

@@ -63,10 +63,9 @@ class FragmentMoreInfo : Fragment() {
         initService()
 
         var cal = Calendar.getInstance()
-
         var week = cal.get(Calendar.DAY_OF_WEEK)
 
-        if (week == 1) {
+        if (week == 1 || week == 7) {
             weekend.setTextColor(Color.rgb(0, 103, 163))
         }
         else if (week == 2) {
@@ -83,9 +82,6 @@ class FragmentMoreInfo : Fragment() {
         }
         else if (week == 6) {
             friday.setTextColor(Color.rgb(0, 103, 163))
-        }
-        else if (week == 7) {
-            weekend.setTextColor(Color.rgb(0, 103, 163))
         }
 
         var moreInfoRecyclerView: RecyclerView = view.findViewById(R.id.moreInfoRecyclerView)
@@ -167,10 +163,7 @@ class FragmentMoreInfo : Fragment() {
         } catch (e: SecurityException) {
             e.printStackTrace()
         }
-
-
-
-
+        
         return view
     }
 
