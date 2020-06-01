@@ -110,13 +110,12 @@
             app:layout_constraintTop_toBottomOf="@+id/created_at" />
 
         <ImageView
-            android:id="@+id/storeFavorite"
+            android:id="@+id/storeDelete"
             android:layout_width="36dp"
             android:layout_height="36dp"
-            android:src="@drawable/ic_star"
+            android:src="@drawable/ic_delete_black_24dp"
             android:layout_marginBottom="8dp"
             android:layout_marginEnd="8dp"
-            android:clickable="true"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 

@@ -2,8 +2,6 @@ package com.example.findmask.activity
 
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
-import android.location.Location
-import android.location.LocationListener
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Base64
@@ -12,10 +10,9 @@ import android.view.MenuItem
 import android.view.View
 import com.example.findmask.R
 import com.example.findmask.fragment.CoronaFragment
-import com.example.findmask.fragment.FragmentMoreInfo
+import com.example.findmask.fragment.FavoriteFragment
+import com.example.findmask.fragment.MoreInfoFragment
 import com.example.findmask.fragment.MainFragment
-import com.example.findmask.service.CoronaService
-import com.example.findmask.service.MaskService
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
@@ -23,7 +20,8 @@ import java.security.NoSuchAlgorithmException
 class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemSelectedListener {
     private val mainFragment = MainFragment()
     private val coronaFragment = CoronaFragment()
-    private val fragmentMoreInfo = FragmentMoreInfo()
+    private val moreInfoFragment = MoreInfoFragment()
+    private val favoriteFragment = FavoriteFragment()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,13 +57,16 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when(item.itemId) {
             R.id.action_main -> {
-                supportFragmentManager.beginTransaction().replace(R.id.frameLayout, mainFragment).commit()
+                supportFragmentManager.beginTransaction().replace(R.id.frameLayout, mainFragment).commitAllowingStateLoss()
             }
             R.id.action_corona -> {
-                supportFragmentManager.beginTransaction().replace(R.id.frameLayout, coronaFragment).commit()
+                supportFragmentManager.beginTransaction().replace(R.id.frameLayout, coronaFragment).commitAllowingStateLoss()
             }
             R.id.action_MoreInfo -> {
-                supportFragmentManager.beginTransaction().replace(R.id.frameLayout, fragmentMoreInfo).commit()
+                supportFragmentManager.beginTransaction().replace(R.id.frameLayout, moreInfoFragment).commitAllowingStateLoss()
+            }
+            R.id.action_Favorite -> {
+                supportFragmentManager.beginTransaction().replace(R.id.frameLayout, favoriteFragment).commitAllowingStateLoss()
             }
         }
         return true

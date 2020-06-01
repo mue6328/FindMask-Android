@@ -88,7 +88,10 @@ class CoronaFragment : Fragment() {
                         totalDeath.text = response.body()!!.TotalDeath + " 명"
 
                         todayRecovered.text = "전일 대비 + " + response.body()!!.TodayRecovered + "명"
-                        todayNowCase.text = "전일 대비 - " + nowCase + "명"
+                        if (nowCase > 0)
+                            todayNowCase.text = "전일 대비 + " + nowCase + "명"
+                        else
+                            todayNowCase.text = "전일 대비 - " + -nowCase + "명"
                         todayDeath.text = "전일 대비 + " + response.body()!!.TodayDeath + "명"
                     }
                 }

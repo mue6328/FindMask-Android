@@ -1,5 +1,8 @@
 package com.example.findmask.model
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
 data class MaskInfo(
     var count: Int,
     var page: Int,
@@ -32,9 +35,13 @@ data class StoreSale(
     var type: String
 )
 
+@Entity
 data class MoreInfo(
+    @PrimaryKey
     var name: String,
+    var addr: String,
     var remain_stat: String,
     var stock_at: String,
-    var created_at: String
+    var created_at: String,
+    var isfavorite: Boolean
 )
