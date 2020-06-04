@@ -33,6 +33,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 import android.widget.EditText
 import android.text.TextWatcher
+import androidx.lifecycle.LiveData
 import com.example.findmask.database.FavoriteDatabase
 import kotlin.collections.HashSet
 
@@ -47,6 +48,7 @@ class MoreInfoFragment : Fragment() {
     private var maskService: MaskService? = null
 
     private var moreInfoList = ArrayList<MoreInfo>()
+    private var moreInfoListFavorite = ArrayList<MoreInfo>()
 
     private var favoriteList = listOf<MoreInfo>()
 
@@ -150,88 +152,23 @@ class MoreInfoFragment : Fragment() {
                         response: Response<MaskByGeoInfo>
                     ) {
                         moreInfoList.clear()
+                        moreInfoListFavorite.clear()
                         if (favoriteList.isNotEmpty()) {
                             for (j in favoriteList.indices) {
                                 for (i in 0 until response.body()!!.count) {
                                     isfavorite = favoriteList[j].addr == response.body()!!.stores[i].addr
-//                                    var size = 0
-//                                    if (i == response.body()!!.count) {
-//                                        isfavorite = favoriteList[size].addr == response.body()!!.stores[i].addr
-//                                        if (isfavorite)
-//                                        size--
-//                                    }
-
-                                    if (isfavorite) {
-
+                                    if(isfavorite) {
+                                        moreInfoListFavorite.add(
+                                            MoreInfo(
+                                                response.body()!!.stores[i].name,
+                                                response.body()!!.stores[i].addr,
+                                                response.body()!!.stores[i].remain_stat,
+                                                response.body()!!.stores[i].stock_at,
+                                                response.body()!!.stores[i].created_at,
+                                                isfavorite
+                                            ))
                                     }
-                                    moreInfoList.add(
-                                        MoreInfo(
-                                            response.body()!!.stores[i].name,
-                                            response.body()!!.stores[i].addr,
-                                            response.body()!!.stores[i].remain_stat,
-                                            response.body()!!.stores[i].stock_at,
-                                            response.body()!!.stores[i].created_at,
-                                            isfavorite
-                                        )
-                                    )
-//                                    for (k in 0 until response.body()!!.count) {
-//                                        if (moreInfoList[i].addr == moreInfoList[k].addr
-//                                            && moreInfoList[i].isfavorite != moreInfoList[k].isfavorite
-//                                            && !isfavorite) {
-//                                            moreInfoList.remove(moreInfoList[i])
-//                                        }
-//                                    }
-//                                    if (isfavorite) {
-//                                        moreInfoList.add(
-//                                            MoreInfo(
-//                                                response.body()!!.stores[i].name,
-//                                                response.body()!!.stores[i].addr,
-//                                                response.body()!!.stores[i].remain_stat,
-//                                                response.body()!!.stores[i].stock_at,
-//                                                response.body()!!.stores[i].created_at,
-//                                                isfavorite
-//                                            )
-//                                        )
-//                                    }
-//                                    else if (!isfavorite) {
-//                                        moreInfoList.add(
-//                                            MoreInfo(
-//                                                response.body()!!.stores[i].name,
-//                                                response.body()!!.stores[i].addr,
-//                                                response.body()!!.stores[i].remain_stat,
-//                                                response.body()!!.stores[i].stock_at,
-//                                                response.body()!!.stores[i].created_at,
-//                                                isfavorite
-//                                            )
-//                                        )
-//                                    }
-//                                    else {
-//                                        moreInfoList.add(
-//                                            MoreInfo(
-//                                                response.body()!!.stores[i].name,
-//                                                response.body()!!.stores[i].addr,
-//                                                response.body()!!.stores[i].remain_stat,
-//                                                response.body()!!.stores[i].stock_at,
-//                                                response.body()!!.stores[i].created_at,
-//                                                isfavorite
-//                                            )
-//                                        )
-//                                    }
 
-//                                        moreInfoList.add(
-//                                            MoreInfo(
-//                                                response.body()!!.stores[i].name,
-//                                                response.body()!!.stores[i].addr,
-//                                                response.body()!!.stores[i].remain_stat,
-//                                                response.body()!!.stores[i].stock_at,
-//                                                response.body()!!.stores[i].created_at,
-//                                                isfavorite
-//                                            )
-//                                        )
-//                                    if (response.body()!!.stores[i].addr == moreInfoList[i].addr
-//                                        || favoriteList[j].isfavorite != moreInfoList[i].isfavorite) {
-//                                        moreInfoList.remove(moreInfoList[i])
-//                                    }
                                 }
                             }
                         }
@@ -251,11 +188,38 @@ class MoreInfoFragment : Fragment() {
                             }
                         }
 
-                        var moreinfo = HashSet<MoreInfo>(moreInfoList)
+                        for (k in 0 until response.body()!!.count) {
+                            if(!moreInfoListFavorite.contains(MoreInfo(
+                                    response.body()!!.stores[k].name,
+                                    response.body()!!.stores[k].addr,
+                                    response.body()!!.stores[k].remain_stat,
+                                    response.body()!!.stores[k].stock_at,
+                                    response.body()!!.stores[k].created_at,
+                                    true))
+                            )
+                            {
+                                moreInfoList.add(
+                                    MoreInfo(
+                                        response.body()!!.stores[k].name,
+                                        response.body()!!.stores[k].addr,
+                                        response.body()!!.stores[k].remain_stat,
+                                        response.body()!!.stores[k].stock_at,
+                                        response.body()!!.stores[k].created_at,
+                                        false
+                                    )
+                                )
+                            }
+                        }
 
-                        var moreinfolistt = ArrayList<MoreInfo>(moreinfo)
+                        //var moreinfo = HashSet<MoreInfo>(moreInfoList)
 
-                        moreInfoAdapter.setItem(moreinfolistt, view.context)
+                        //var moreInfoDuplicate = ArrayList<MoreInfo>(moreinfo)
+
+                        moreInfoListFavorite.addAll(moreInfoList)
+
+                        Log.i("listsize", "" + moreInfoListFavorite.size)
+
+                        moreInfoAdapter.setItem(moreInfoListFavorite, view.context)
                     }
                 })
 

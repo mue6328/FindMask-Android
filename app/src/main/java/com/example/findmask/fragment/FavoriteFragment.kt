@@ -15,6 +15,8 @@ import com.example.findmask.database.FavoriteDatabase
 import com.example.findmask.model.MoreInfo
 import java.util.ArrayList
 import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -41,6 +43,8 @@ class FavoriteFragment : Fragment() {
         favoriteDatabase = FavoriteDatabase.getInstance(view.context)
 
         var favoriteRecyclerView = view.findViewById<RecyclerView>(R.id.favoriteRecyclerView)
+        //var toolbar = view.findViewById<Toolbar>(R.id.toolbar)
+
 
         var favoriteAdapter = FavoriteAdapter()
 
@@ -49,6 +53,12 @@ class FavoriteFragment : Fragment() {
         favoriteRecyclerView.adapter = favoriteAdapter
 
         val activity = activity
+        //(activity as AppCompatActivity).setSupportActionBar(toolbar)
+
+        //var actionBar = activity!!.actionBar
+        //getActivity().actionBar
+        //var actionBar = activity.actionBar
+        //actionBar!!.title = "ee"
 
         val runnable = Runnable {
                 favoriteList = favoriteDatabase?.favoriteDao()?.getFavorites()!!

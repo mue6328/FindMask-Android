@@ -68,7 +68,9 @@ class FavoriteAdapter : RecyclerView.Adapter<FavoriteAdapter.Holder>() {
             favoriteDatabase = FavoriteDatabase.getInstance(context)
 
             val runnable = Runnable {
-                favoriteDatabase?.favoriteDao()?.delete(storeSale[position])
+                if (favoriteDatabase?.favoriteDao()?.getFavorites() != null) {
+                    favoriteDatabase?.favoriteDao()?.delete(storeSale[position])
+                }
                 this.storeSale = favoriteDatabase?.favoriteDao()?.getFavorites()!!
                 Log.d("delete", "" + favoriteDatabase?.favoriteDao()?.getFavorites())
             }

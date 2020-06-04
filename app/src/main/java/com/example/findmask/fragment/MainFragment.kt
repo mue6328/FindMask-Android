@@ -86,8 +86,8 @@ class MainFragment : Fragment() {
                 else {
                     location = lm!!.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
                     // 에뮬레이터 테스트
-//                    var longitude = 127.0342169
-//                    var latitude = 37.5010881
+                    //var longitude = 127.0342169
+                    //var latitude = 37.5010881
 
                     // 휴대폰
                     var longitude = location!!.longitude
