@@ -34,12 +34,9 @@ class FavoriteFragment : Fragment() {
     private var favoriteDatabase: FavoriteDatabase? = null
     private var favoriteList = listOf<MoreInfo>()
 
-    private var maskService: MaskService? = null
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         var view = inflater.inflate(R.layout.fragment_favorite, container, false)
 
-        initService()
         favoriteDatabase = FavoriteDatabase.getInstance(view.context)
 
         var favoriteRecyclerView = view.findViewById<RecyclerView>(R.id.favoriteRecyclerView)
@@ -81,36 +78,34 @@ class FavoriteFragment : Fragment() {
                 var longitude = 127.0342169
                 var latitude = 37.5010881
 
-                maskService!!.getStoreByGeoInfo(latitude, longitude, 500).enqueue(object :
-                Callback<MaskByGeoInfo> {
-                    override fun onFailure(call: Call<MaskByGeoInfo>, t: Throwable) {
+                //var longitude = 128.568975
+                //var latitude = 35.8438071
 
-                    }
+            MaskService.getStoreByGeoInfo(latitude, longitude, 500).enqueue(object : Callback<MaskByGeoInfo>{
+                override fun onFailure(call: Call<MaskByGeoInfo>, t: Throwable) {
 
-                    override fun onResponse(
-                        call: Call<MaskByGeoInfo>, response: Response<MaskByGeoInfo>) {
-                        for (j in favoriteList.indices) {
-                            for (i in 0 until response.body()!!.count) {
-                                if (favoriteList[j].addr == response.body()!!.stores[i].addr) {
-                                    favoriteList[j].remain_stat = response.body()!!.stores[i].remain_stat
-                                    favoriteList[j].stock_at = response.body()!!.stores[i].stock_at
-                                    favoriteList[j].created_at = response.body()!!.stores[i].created_at
-                                }
+                }
+
+                override fun onResponse(
+                    call: Call<MaskByGeoInfo>,
+                    response: Response<MaskByGeoInfo>
+                ) {
+                    for (j in favoriteList.indices) {
+                        for (i in 0 until response.body()!!.count) {
+                            if (favoriteList[j].addr == response.body()!!.stores[i].addr) {
+                                favoriteList[j].remain_stat = response.body()!!.stores[i].remain_stat
+                                favoriteList[j].stock_at = response.body()!!.stores[i].stock_at
+                                favoriteList[j].created_at = response.body()!!.stores[i].created_at
                             }
                         }
-
-                        favoriteAdapter.setItem(favoriteList, view.context)
-
                     }
-                })
+                    favoriteAdapter.setItem(favoriteList, view.context)
+                }
+            })
         } catch (e: SecurityException) {
             e.printStackTrace()
         }
 
         return view
-    }
-
-    private fun initService() {
-        maskService = Utils.retrofit_MASK.create(MaskService::class.java)
     }
 }

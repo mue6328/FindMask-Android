@@ -18,9 +18,6 @@ interface FavoriteDao {
     @Delete
     fun delete(moreInfo: MoreInfo)
 
-//    @Query("select * from MoreInfo where id=:id")
-//    fun getFavorite(id: Long) : MoreInfo
-
     @Query("DELETE from MoreInfo")
     fun deleteAll()
 }

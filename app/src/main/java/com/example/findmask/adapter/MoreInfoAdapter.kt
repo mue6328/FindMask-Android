@@ -83,8 +83,29 @@ class MoreInfoAdapter : RecyclerView.Adapter<MoreInfoAdapter.Holder>() {
             var toast = ""
 
             val runnable = Runnable {
+                if (storeSale[position].remain_stat == "plenty") {
+                    holder.remain_stat.text = "100개 이상"
+                    holder.remain_stat.setTextColor(Color.parseColor("#32CD32"))
+                }
+                else if(storeSale[position].remain_stat == "some") {
+                    holder.remain_stat.text = "30~99개"
+                    holder.remain_stat.setTextColor(Color.parseColor("#ff7f00"))
+                }
+                else if(storeSale[position].remain_stat == "few") {
+                    holder.remain_stat.text = "2~29개"
+                    holder.remain_stat.setTextColor(Color.parseColor("#ff0000"))
+                }
+                else if(storeSale[position].remain_stat == "empty") {
+                    holder.remain_stat.text = "0~1개"
+                    holder.remain_stat.setTextColor(Color.parseColor("#000000"))
+                }
+                else if(storeSale[position].remain_stat == "break") {
+                    holder.remain_stat.text = "판매중지"
+                    holder.remain_stat.setTextColor(Color.parseColor("#808080"))
+                }
+
                 val store = MoreInfo(storeSale[position].name, storeSale[position].addr,
-                    holder.remain_stat.text.toString(), storeSale[position].stock_at, storeSale[position].created_at, true)
+                    storeSale[position].remain_stat, storeSale[position].stock_at, storeSale[position].created_at, true)
                 if (storeSale[position].isfavorite) {
                     favoriteDatabase?.favoriteDao()?.delete(storeSale[position])
                     this.storeSale[position].isfavorite = false

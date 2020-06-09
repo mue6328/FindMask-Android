@@ -43,9 +43,6 @@ import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 
 class MainFragment : Fragment() {
-
-    private var maskService: MaskService? = null
-
     private var mcontext: Context? = null
 
     override fun onAttach(context: Context) {
@@ -65,16 +62,13 @@ class MainFragment : Fragment() {
 
         var shopMarker = MapPOIItem()
         var remain_stat: String
-        initService()
-
-
 
         clear.setOnClickListener {
             mask_cardView.visibility = View.GONE
         }
 
             try {
-                val lm : LocationManager? = activity!!.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+                val lm : LocationManager? = activity!!.getSystemService(LOCATION_SERVICE) as LocationManager
                 var location : Location? = null
 
                 if (Build.VERSION.SDK_INT >= 23 &&
@@ -107,7 +101,7 @@ class MainFragment : Fragment() {
                     marker.customImageResourceId = R.drawable.baseline_fiber_manual_record_black_24dp
                     marker.markerType = MapPOIItem.MarkerType.CustomImage
 
-                    maskService!!.getStoreByGeoInfo(latitude, longitude, 5000).enqueue(object :
+                    MaskService.getStoreByGeoInfo(latitude, longitude, 5000).enqueue(object :
                         Callback<MaskByGeoInfo> {
                         override fun onFailure(call: Call<MaskByGeoInfo>, t: Throwable) {
                             Log.d("error",t.toString())
@@ -118,8 +112,6 @@ class MainFragment : Fragment() {
                             response: Response<MaskByGeoInfo>
                         ) {
                             for (i in 0 until response.body()!!.count) {
-
-
                                 if (response.body()!!.stores[i].remain_stat == "plenty") {
                                     shopMarker.markerType = MapPOIItem.MarkerType.BluePin
                                     remain_stat = "충분"
@@ -161,8 +153,6 @@ class MainFragment : Fragment() {
                                         marker.mapPoint = MapPoint.mapPointWithGeoCoord(latitude, longitude)
                                         mapView.addPOIItem(marker)
                                     }
-
-
                                 }
 
                                 override fun onStatusChanged(p0: String?, p1: Int, p2: Bundle?) {
@@ -193,18 +183,12 @@ class MainFragment : Fragment() {
                     centerPoint.setOnClickListener {
                         mapView.setMapCenterPoint(MapPoint.mapPointWithGeoCoord(latitude, longitude), true)
                     }
-                        }
+                }
             }
             catch (e: Exception) {
                 e.printStackTrace()
             }
 
         return view
-    }
-
-
-
-    private fun initService() {
-        maskService = Utils.retrofit_MASK.create(MaskService::class.java)
     }
 }

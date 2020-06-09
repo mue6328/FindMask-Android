@@ -24,8 +24,6 @@ class FavoriteAdapter : RecyclerView.Adapter<FavoriteAdapter.Holder>() {
 
     private var favoriteDatabase: FavoriteDatabase? = null
 
-
-
     fun setItem(list: List<MoreInfo>, context: Context) {
             this.storeSale = list
             this.context = context

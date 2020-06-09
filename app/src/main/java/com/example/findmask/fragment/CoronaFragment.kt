@@ -30,15 +30,11 @@ import retrofit2.Response
 import java.util.ArrayList
 
 class CoronaFragment : Fragment() {
-
-    private var coronaService: CoronaService? = null
-
     private var colors = ArrayList<Int>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         var view = inflater.inflate(R.layout.fragment_corona, container, false)
-        initService()
 
         var totalCase = view.findViewById<TextView>(R.id.totalCase)
         var totalRecovered = view.findViewById<TextView>(R.id.totalRecovered)
@@ -56,7 +52,7 @@ class CoronaFragment : Fragment() {
 
         addColors()
 
-            coronaService!!.getCoronaInfo(Utils.API_KEY).enqueue(object : Callback<CoronaInfo> {
+            CoronaService.getCoronaInfo(Utils.API_KEY).enqueue(object : Callback<CoronaInfo> {
                 override fun onFailure(call: Call<CoronaInfo>, t: Throwable) {
                     Log.d("error", t.toString())
                 }
@@ -98,10 +94,6 @@ class CoronaFragment : Fragment() {
             })
 
         return view
-    }
-
-    private fun initService() {
-        coronaService = Utils.retrofit_CORONA.create(CoronaService::class.java)
     }
 
     private fun addColors() {

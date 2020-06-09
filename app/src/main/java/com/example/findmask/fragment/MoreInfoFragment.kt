@@ -45,8 +45,6 @@ class MoreInfoFragment : Fragment() {
         search_filter.text.clear()
     }
 
-    private var maskService: MaskService? = null
-
     private var moreInfoList = ArrayList<MoreInfo>()
     private var moreInfoListFavorite = ArrayList<MoreInfo>()
 
@@ -66,8 +64,6 @@ class MoreInfoFragment : Fragment() {
         var thursday = view.findViewById<TextView>(R.id.thursday)
         var friday = view.findViewById<TextView>(R.id.friday)
         var weekend = view.findViewById<TextView>(R.id.weekend)
-
-        initService()
 
         var cal = Calendar.getInstance()
         var week = cal.get(Calendar.DAY_OF_WEEK)
@@ -110,7 +106,6 @@ class MoreInfoFragment : Fragment() {
         val thread = Thread(runnable)
         thread.start()
 
-
         searchFilter.addTextChangedListener(object : TextWatcher{
             override fun afterTextChanged(p0: Editable?) {
                 moreInfoAdapter.filter(searchFilter.text.toString().toLowerCase())
@@ -139,56 +134,60 @@ class MoreInfoFragment : Fragment() {
                 var longitude = 127.0342169
                 var latitude = 37.5010881
 
+//                var longitude = 128.568975
+//                var latitude = 35.8438071
+
                 var isfavorite: Boolean = false
 
-                maskService!!.getStoreByGeoInfo(latitude, longitude, 500).enqueue(object :
-                    Callback<MaskByGeoInfo> {
-                    override fun onFailure(call: Call<MaskByGeoInfo>, t: Throwable) {
-                        Log.d("error", t.toString())
+                MaskService.getStoreByGeoInfo(latitude, longitude, 500).enqueue(object : Callback<MaskByGeoInfo> {
+                override fun onFailure(call: Call<MaskByGeoInfo>, t: Throwable) {
+
+                }
+
+                override fun onResponse(
+                    call: Call<MaskByGeoInfo>,
+                    response: Response<MaskByGeoInfo>
+                ) {
+                    moreInfoList.clear()
+                    moreInfoListFavorite.clear()
+                    if (favoriteList.isNotEmpty()) {
+                        for (j in favoriteList.indices) {
+                            for (i in 0 until response.body()!!.count) {
+                                isfavorite = favoriteList[j].addr == response.body()!!.stores[i].addr
+                                if(isfavorite) {
+                                    moreInfoListFavorite.add(
+                                        MoreInfo(
+                                            response.body()!!.stores[i].name,
+                                            response.body()!!.stores[i].addr,
+                                            response.body()!!.stores[i].remain_stat,
+                                            response.body()!!.stores[i].stock_at,
+                                            response.body()!!.stores[i].created_at,
+                                            isfavorite
+                                        ))
+                                }
+
+                            }
+                        }
+                    }
+                    else {
+                        for (i in 0 until response.body()!!.count) {
+                            isfavorite = false
+                            moreInfoList.add(
+                                MoreInfo(
+                                    response.body()!!.stores[i].name,
+                                    response.body()!!.stores[i].addr,
+                                    response.body()!!.stores[i].remain_stat,
+                                    response.body()!!.stores[i].stock_at,
+                                    response.body()!!.stores[i].created_at,
+                                    isfavorite
+                                )
+                            )
+                        }
                     }
 
-                    override fun onResponse(
-                        call: Call<MaskByGeoInfo>,
-                        response: Response<MaskByGeoInfo>
-                    ) {
-                        moreInfoList.clear()
-                        moreInfoListFavorite.clear()
-                        if (favoriteList.isNotEmpty()) {
-                            for (j in favoriteList.indices) {
-                                for (i in 0 until response.body()!!.count) {
-                                    isfavorite = favoriteList[j].addr == response.body()!!.stores[i].addr
-                                    if(isfavorite) {
-                                        moreInfoListFavorite.add(
-                                            MoreInfo(
-                                                response.body()!!.stores[i].name,
-                                                response.body()!!.stores[i].addr,
-                                                response.body()!!.stores[i].remain_stat,
-                                                response.body()!!.stores[i].stock_at,
-                                                response.body()!!.stores[i].created_at,
-                                                isfavorite
-                                            ))
-                                    }
-
-                                }
-                            }
-                        }
-                        else {
-                            for (i in 0 until response.body()!!.count) {
-                                isfavorite = false
-                                moreInfoList.add(
-                                    MoreInfo(
-                                        response.body()!!.stores[i].name,
-                                        response.body()!!.stores[i].addr,
-                                        response.body()!!.stores[i].remain_stat,
-                                        response.body()!!.stores[i].stock_at,
-                                        response.body()!!.stores[i].created_at,
-                                        isfavorite
-                                    )
-                                )
-                            }
-                        }
-
-                        for (k in 0 until response.body()!!.count) {
+                    for (k in 0 until response.body()!!.count) {
+                        Log.d("favoritesize", "" + moreInfoListFavorite.isNotEmpty() + response.body()!!.stores)
+                        if(moreInfoListFavorite.isNotEmpty() && response.body()!!.stores[k].remain_stat != null) {
                             if(!moreInfoListFavorite.contains(MoreInfo(
                                     response.body()!!.stores[k].name,
                                     response.body()!!.stores[k].addr,
@@ -196,8 +195,7 @@ class MoreInfoFragment : Fragment() {
                                     response.body()!!.stores[k].stock_at,
                                     response.body()!!.stores[k].created_at,
                                     true))
-                            )
-                            {
+                            ) {
                                 moreInfoList.add(
                                     MoreInfo(
                                         response.body()!!.stores[k].name,
@@ -210,29 +208,32 @@ class MoreInfoFragment : Fragment() {
                                 )
                             }
                         }
-
-                        //var moreinfo = HashSet<MoreInfo>(moreInfoList)
-
-                        //var moreInfoDuplicate = ArrayList<MoreInfo>(moreinfo)
-
-                        moreInfoListFavorite.addAll(moreInfoList)
-
-                        Log.i("listsize", "" + moreInfoListFavorite.size)
-
-                        moreInfoAdapter.setItem(moreInfoListFavorite, view.context)
+                        else if (response.body()!!.stores[k].remain_stat != null){
+                            moreInfoList.add(
+                                MoreInfo(
+                                    response.body()!!.stores[k].name,
+                                    response.body()!!.stores[k].addr,
+                                    response.body()!!.stores[k].remain_stat,
+                                    response.body()!!.stores[k].stock_at,
+                                    response.body()!!.stores[k].created_at,
+                                    false
+                                )
+                            )
+                        }
                     }
-                })
+
+                    moreInfoListFavorite.addAll(moreInfoList)
+
+                    Log.i("listsize", "" + moreInfoListFavorite.size)
+
+                    moreInfoAdapter.setItem(moreInfoListFavorite, view.context)
+                }
+            })
 
         } catch (e: SecurityException) {
             e.printStackTrace()
         }
 
         return view
-    }
-
-
-
-    private fun initService() {
-        maskService = Utils.retrofit_MASK.create(MaskService::class.java)
     }
 }
