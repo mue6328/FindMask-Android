@@ -26,6 +26,7 @@ import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import com.example.findmask.R
 import com.example.findmask.Utils
+import com.example.findmask.databinding.FragmentMainBinding
 import com.example.findmask.model.CoronaInfo
 import com.example.findmask.model.MaskByGeoInfo
 import com.example.findmask.service.CoronaService
@@ -52,18 +53,15 @@ class MainFragment : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        var view = inflater.inflate(R.layout.fragment_main, container, false);
-
-        var map = view.findViewById<RelativeLayout>(R.id.map_view)
-        var clear = view.findViewById<ImageView>(R.id.clear)
-        var centerPoint = view.findViewById<ImageView>(R.id.centerPoint)
+        val binding = FragmentMainBinding.inflate(inflater, container, false)
+        val view = binding.root
 
         val activity = activity
 
         var shopMarker = MapPOIItem()
         var remain_stat: String
 
-        clear.setOnClickListener {
+        binding.clear.setOnClickListener {
             mask_cardView.visibility = View.GONE
         }
 
@@ -89,7 +87,7 @@ class MainFragment : Fragment() {
 
                     val mapView = MapView(activity)
 
-                    val mapViewContainer = map as ViewGroup
+                    val mapViewContainer = binding.mapView as ViewGroup
 
                     mapView.setMapCenterPoint(MapPoint.mapPointWithGeoCoord(latitude, longitude), true)
 
@@ -180,7 +178,7 @@ class MainFragment : Fragment() {
                         1f,
                         locationListener)
 
-                    centerPoint.setOnClickListener {
+                    binding.centerPoint.setOnClickListener {
                         mapView.setMapCenterPoint(MapPoint.mapPointWithGeoCoord(latitude, longitude), true)
                     }
                 }

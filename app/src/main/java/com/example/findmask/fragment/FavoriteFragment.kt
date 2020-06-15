@@ -23,6 +23,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.findmask.Utils
 import com.example.findmask.adapter.FavoriteAdapter
+import com.example.findmask.databinding.FragmentFavoriteBinding
 import com.example.findmask.model.MaskByGeoInfo
 import com.example.findmask.service.MaskService
 import retrofit2.Call
@@ -33,29 +34,20 @@ class FavoriteFragment : Fragment() {
 
     private var favoriteDatabase: FavoriteDatabase? = null
     private var favoriteList = listOf<MoreInfo>()
+    private var removeList = ArrayList<MoreInfo>()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        var view = inflater.inflate(R.layout.fragment_favorite, container, false)
+        val binding = FragmentFavoriteBinding.inflate(inflater, container, false)
+        val view = binding.root
 
         favoriteDatabase = FavoriteDatabase.getInstance(view.context)
-
-        var favoriteRecyclerView = view.findViewById<RecyclerView>(R.id.favoriteRecyclerView)
-        //var toolbar = view.findViewById<Toolbar>(R.id.toolbar)
-
-
         var favoriteAdapter = FavoriteAdapter()
 
-        favoriteRecyclerView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-        favoriteRecyclerView.setHasFixedSize(true)
-        favoriteRecyclerView.adapter = favoriteAdapter
+        binding.favoriteRecyclerView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+        binding.favoriteRecyclerView.setHasFixedSize(true)
+        binding.favoriteRecyclerView.adapter = favoriteAdapter
 
         val activity = activity
-        //(activity as AppCompatActivity).setSupportActionBar(toolbar)
-
-        //var actionBar = activity!!.actionBar
-        //getActivity().actionBar
-        //var actionBar = activity.actionBar
-        //actionBar!!.title = "ee"
 
         val runnable = Runnable {
                 favoriteList = favoriteDatabase?.favoriteDao()?.getFavorites()!!
@@ -63,6 +55,7 @@ class FavoriteFragment : Fragment() {
 
         val thread = Thread(runnable)
         thread.start()
+
 
         try {
             val lm: LocationManager? =
@@ -104,6 +97,16 @@ class FavoriteFragment : Fragment() {
             })
         } catch (e: SecurityException) {
             e.printStackTrace()
+        }
+
+        binding.deleteAll.setOnClickListener {
+            val runnable = Runnable {
+                favoriteDatabase?.favoriteDao()?.deleteAll()
+            }
+
+            val thread = Thread(runnable)
+            thread.start()
+            favoriteAdapter.setItem(removeList, view.context)
         }
 
         return view

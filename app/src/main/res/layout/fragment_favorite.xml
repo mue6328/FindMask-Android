@@ -14,6 +14,16 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
+            <Button
+                android:id="@+id/deleteAll"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="전체 삭제"
+                android:textSize="18dp"
+                android:textAlignment="center"
+                android:textColor="#FFFFFF"
+                android:background="#000000"/>
+
 <!--            <androidx.appcompat.widget.Toolbar-->
 <!--                android:id="@+id/toolbar"-->
 <!--                android:layout_width="match_parent"-->

@@ -13,6 +13,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.RecyclerView
 import com.example.findmask.R
 import com.example.findmask.database.FavoriteDatabase
+import com.example.findmask.databinding.ItemFavoriteBinding
 import com.example.findmask.model.MoreInfo
 import java.util.*
 
@@ -35,34 +36,34 @@ class FavoriteAdapter : RecyclerView.Adapter<FavoriteAdapter.Holder>() {
     }
 
     override fun onBindViewHolder(holder: Holder, position: Int) {
-        holder.storeName.text = storeSale[position].name
-        holder.storeAddress.text = storeSale[position].addr
+        holder.binding.storeName.text = storeSale[position].name
+        holder.binding.storeAddress.text = storeSale[position].addr
 
         if (storeSale[position].remain_stat == "plenty") {
-            holder.remain_stat.text = "100개 이상"
-            holder.remain_stat.setTextColor(Color.parseColor("#32CD32"))
+            holder.binding.remainStat.text = "100개 이상"
+            holder.binding.remainStat.setTextColor(Color.parseColor("#32CD32"))
         }
         else if(storeSale[position].remain_stat == "some") {
-            holder.remain_stat.text = "30~99개"
-            holder.remain_stat.setTextColor(Color.parseColor("#ff7f00"))
+            holder.binding.remainStat.text = "30~99개"
+            holder.binding.remainStat.setTextColor(Color.parseColor("#ff7f00"))
         }
         else if(storeSale[position].remain_stat == "few") {
-            holder.remain_stat.text = "2~29개"
-            holder.remain_stat.setTextColor(Color.parseColor("#ff0000"))
+            holder.binding.remainStat.text = "2~29개"
+            holder.binding.remainStat.setTextColor(Color.parseColor("#ff0000"))
         }
         else if(storeSale[position].remain_stat == "empty") {
-            holder.remain_stat.text = "0~1개"
-            holder.remain_stat.setTextColor(Color.parseColor("#000000"))
+            holder.binding.remainStat.text = "0~1개"
+            holder.binding.remainStat.setTextColor(Color.parseColor("#000000"))
         }
         else if(storeSale[position].remain_stat == "break") {
-            holder.remain_stat.text = "판매중지"
-            holder.remain_stat.setTextColor(Color.parseColor("#808080"))
+            holder.binding.remainStat.text = "판매중지"
+            holder.binding.remainStat.setTextColor(Color.parseColor("#808080"))
         }
 
-        holder.create_at.text = storeSale[position].created_at
-        holder.stock_at.text = storeSale[position].stock_at
+        holder.binding.createdAt.text = storeSale[position].created_at
+        holder.binding.stockAt.text = storeSale[position].stock_at
 
-        holder.storeDelete.setOnClickListener {
+        holder.binding.storeDelete.setOnClickListener {
             favoriteDatabase = FavoriteDatabase.getInstance(context)
 
             val runnable = Runnable {
@@ -91,17 +92,9 @@ class FavoriteAdapter : RecyclerView.Adapter<FavoriteAdapter.Holder>() {
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_favorite, parent, false)
-        return Holder(view)
+        val binding = ItemFavoriteBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return Holder(binding)
     }
 
-    class Holder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        var storeName: TextView = itemView.findViewById(R.id.storeName)
-        var storeAddress: TextView = itemView.findViewById(R.id.storeAddress)
-        var remain_stat: TextView = itemView.findViewById(R.id.remain_stat)
-        var create_at: TextView = itemView.findViewById(R.id.created_at)
-        var stock_at: TextView = itemView.findViewById(R.id.stock_at)
-        var storeDelete: ImageView = itemView.findViewById(R.id.storeDelete)
-    }
+    class Holder(val binding: ItemFavoriteBinding) : RecyclerView.ViewHolder(binding.root) {}
 }

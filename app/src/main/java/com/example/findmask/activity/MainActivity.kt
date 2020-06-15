@@ -2,12 +2,14 @@ package com.example.findmask.activity
 
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Base64
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
+import androidx.annotation.RequiresApi
 import com.example.findmask.R
 import com.example.findmask.fragment.CoronaFragment
 import com.example.findmask.fragment.FavoriteFragment
@@ -36,6 +38,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
     }
 
 
+    @RequiresApi(Build.VERSION_CODES.P)
     private fun getHashKey() {
         try {
             var info : PackageInfo = packageManager.getPackageInfo(packageName, PackageManager.GET_SIGNING_CERTIFICATES)

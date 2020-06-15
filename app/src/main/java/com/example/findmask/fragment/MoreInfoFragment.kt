@@ -35,6 +35,7 @@ import android.widget.EditText
 import android.text.TextWatcher
 import androidx.lifecycle.LiveData
 import com.example.findmask.database.FavoriteDatabase
+import com.example.findmask.databinding.FragmentMoreinfoBinding
 import kotlin.collections.HashSet
 
 class MoreInfoFragment : Fragment() {
@@ -54,37 +55,29 @@ class MoreInfoFragment : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        var view = inflater.inflate(R.layout.fragment_moreinfo, container, false)
-
-        var searchFilter = view.findViewById<EditText>(R.id.search_filter)
-
-        var monday = view.findViewById<TextView>(R.id.monday)
-        var tuesday = view.findViewById<TextView>(R.id.tuesday)
-        var wednesday = view.findViewById<TextView>(R.id.wednesday)
-        var thursday = view.findViewById<TextView>(R.id.thursday)
-        var friday = view.findViewById<TextView>(R.id.friday)
-        var weekend = view.findViewById<TextView>(R.id.weekend)
+        val binding = FragmentMoreinfoBinding.inflate(inflater, container, false)
+        val view = binding.root
 
         var cal = Calendar.getInstance()
         var week = cal.get(Calendar.DAY_OF_WEEK)
 
         if (week == 1 || week == 7) {
-            weekend.setTextColor(Color.rgb(0, 103, 163))
+            binding.weekend.setTextColor(Color.rgb(0, 103, 163))
         }
         else if (week == 2) {
-            monday.setTextColor(Color.rgb(0, 103, 163))
+            binding.monday.setTextColor(Color.rgb(0, 103, 163))
         }
         else if (week == 3) {
-            tuesday.setTextColor(Color.rgb(0, 103, 163))
+            binding.tuesday.setTextColor(Color.rgb(0, 103, 163))
         }
         else if (week == 4) {
-            wednesday.setTextColor(Color.rgb(0, 103, 163))
+            binding.wednesday.setTextColor(Color.rgb(0, 103, 163))
         }
         else if (week == 5) {
-            thursday.setTextColor(Color.rgb(0, 103, 163))
+            binding.thursday.setTextColor(Color.rgb(0, 103, 163))
         }
         else if (week == 6) {
-            friday.setTextColor(Color.rgb(0, 103, 163))
+            binding.friday.setTextColor(Color.rgb(0, 103, 163))
         }
 
         var moreInfoRecyclerView: RecyclerView = view.findViewById(R.id.moreInfoRecyclerView)
@@ -106,9 +99,9 @@ class MoreInfoFragment : Fragment() {
         val thread = Thread(runnable)
         thread.start()
 
-        searchFilter.addTextChangedListener(object : TextWatcher{
+        binding.searchFilter.addTextChangedListener(object : TextWatcher{
             override fun afterTextChanged(p0: Editable?) {
-                moreInfoAdapter.filter(searchFilter.text.toString().toLowerCase())
+                moreInfoAdapter.filter(binding.searchFilter.text.toString().toLowerCase())
             }
 
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {

@@ -15,6 +15,7 @@ import android.content.Context
 import com.example.findmask.database.FavoriteDatabase
 import android.util.Log
 import android.widget.Toast
+import com.example.findmask.databinding.ItemMoreinfoBinding
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.List
@@ -29,8 +30,6 @@ class MoreInfoAdapter : RecyclerView.Adapter<MoreInfoAdapter.Holder>() {
 
     private var favoriteDatabase: FavoriteDatabase? = null
 
-    private var favoriteList = listOf<MoreInfo>()
-
     fun setItem(list: ArrayList<MoreInfo>, context: Context) {
             this.storeSale = list
             this.context = context
@@ -43,65 +42,65 @@ class MoreInfoAdapter : RecyclerView.Adapter<MoreInfoAdapter.Holder>() {
     }
 
     override fun onBindViewHolder(holder: Holder, position: Int) {
-        holder.storeName.text = storeSale[position].name
-        holder.storeAddress.text = storeSale[position].addr
+        holder.binding.storeName.text = storeSale[position].name
+        holder.binding.storeAddress.text = storeSale[position].addr
 
         if (storeSale[position].remain_stat == "plenty") {
-            holder.remain_stat.text = "100개 이상"
-            holder.remain_stat.setTextColor(Color.parseColor("#32CD32"))
+            holder.binding.remainStat.text = "100개 이상"
+            holder.binding.remainStat.setTextColor(Color.parseColor("#32CD32"))
         }
         else if(storeSale[position].remain_stat == "some") {
-            holder.remain_stat.text = "30~99개"
-            holder.remain_stat.setTextColor(Color.parseColor("#ff7f00"))
+            holder.binding.remainStat.text = "30~99개"
+            holder.binding.remainStat.setTextColor(Color.parseColor("#ff7f00"))
         }
         else if(storeSale[position].remain_stat == "few") {
-            holder.remain_stat.text = "2~29개"
-            holder.remain_stat.setTextColor(Color.parseColor("#ff0000"))
+            holder.binding.remainStat.text = "2~29개"
+            holder.binding.remainStat.setTextColor(Color.parseColor("#ff0000"))
         }
         else if(storeSale[position].remain_stat == "empty") {
-            holder.remain_stat.text = "0~1개"
-            holder.remain_stat.setTextColor(Color.parseColor("#000000"))
+            holder.binding.remainStat.text = "0~1개"
+            holder.binding.remainStat.setTextColor(Color.parseColor("#000000"))
         }
         else if(storeSale[position].remain_stat == "break") {
-            holder.remain_stat.text = "판매중지"
-            holder.remain_stat.setTextColor(Color.parseColor("#808080"))
+            holder.binding.remainStat.text = "판매중지"
+            holder.binding.remainStat.setTextColor(Color.parseColor("#808080"))
         }
 
-        holder.create_at.text = storeSale[position].created_at
-        holder.stock_at.text = storeSale[position].stock_at
+        holder.binding.createdAt.text = storeSale[position].created_at
+        holder.binding.stockAt.text = storeSale[position].stock_at
 
         if (storeSale[position].isfavorite) {
-            holder.storeFavorite.setImageResource(R.drawable.ic_star)
+            holder.binding.storeFavorite.setImageResource(R.drawable.ic_star)
         }
         else {
-            holder.storeFavorite.setImageResource(R.drawable.ic_star_border_black_24dp)
+            holder.binding.storeFavorite.setImageResource(R.drawable.ic_star_border_black_24dp)
         }
 
-        holder.storeFavorite.setOnClickListener {
+        holder.binding.storeFavorite.setOnClickListener {
             favoriteDatabase = FavoriteDatabase.getInstance(context)
 
             var toast = ""
 
             val runnable = Runnable {
                 if (storeSale[position].remain_stat == "plenty") {
-                    holder.remain_stat.text = "100개 이상"
-                    holder.remain_stat.setTextColor(Color.parseColor("#32CD32"))
+                    holder.binding.remainStat.text = "100개 이상"
+                    holder.binding.remainStat.setTextColor(Color.parseColor("#32CD32"))
                 }
                 else if(storeSale[position].remain_stat == "some") {
-                    holder.remain_stat.text = "30~99개"
-                    holder.remain_stat.setTextColor(Color.parseColor("#ff7f00"))
+                    holder.binding.remainStat.text = "30~99개"
+                    holder.binding.remainStat.setTextColor(Color.parseColor("#ff7f00"))
                 }
                 else if(storeSale[position].remain_stat == "few") {
-                    holder.remain_stat.text = "2~29개"
-                    holder.remain_stat.setTextColor(Color.parseColor("#ff0000"))
+                    holder.binding.remainStat.text = "2~29개"
+                    holder.binding.remainStat.setTextColor(Color.parseColor("#ff0000"))
                 }
                 else if(storeSale[position].remain_stat == "empty") {
-                    holder.remain_stat.text = "0~1개"
-                    holder.remain_stat.setTextColor(Color.parseColor("#000000"))
+                    holder.binding.remainStat.text = "0~1개"
+                    holder.binding.remainStat.setTextColor(Color.parseColor("#000000"))
                 }
                 else if(storeSale[position].remain_stat == "break") {
-                    holder.remain_stat.text = "판매중지"
-                    holder.remain_stat.setTextColor(Color.parseColor("#808080"))
+                    holder.binding.remainStat.text = "판매중지"
+                    holder.binding.remainStat.setTextColor(Color.parseColor("#808080"))
                 }
 
                 val store = MoreInfo(storeSale[position].name, storeSale[position].addr,
@@ -112,33 +111,8 @@ class MoreInfoAdapter : RecyclerView.Adapter<MoreInfoAdapter.Holder>() {
                 }
                 else {
                     favoriteDatabase?.favoriteDao()?.insert(store)
-          //          favoriteList = favoriteDatabase?.favoriteDao()?.getFavorites()!!
                     this.storeSale[position].isfavorite = true
                 }
-
-
-
-                //var i = 1
-//                favoriteDatabase?.favoriteDao()?.deleteAll()
-//                if (favoriteDatabase?.favoriteDao()?.getFavorites()!!.isNotEmpty()) {
-//                    for (i in favoriteDatabase?.favoriteDao()?.getFavorites()!!.indices) {
-//                        if (favoriteDatabase?.favoriteDao()?.getFavorite(i.toLong())!!.name == store.name
-//                            && favoriteDatabase?.favoriteDao()?.getFavorite(i.toLong())!!.addr == store.addr) {
-//                            Log.d("favoriteee", store.toString() + favoriteDatabase?.favoriteDao()?.getFavorites())
-//                        }
-//                        else {
-//                            favoriteDatabase?.favoriteDao()?.insert(store)
-//                        }
-//                    }
-//                }
-//                else {
-//                    favoriteDatabase?.favoriteDao()?.insert(store)
-//                }
-
-                //Toast.makeText(context, "즐겨찾기에 추가되었습니다.", Toast.LENGTH_SHORT).show()
-
-
-                Log.d("favorite", store.toString() + favoriteDatabase?.favoriteDao()?.getFavorites())
             }
 
             val thread = Thread(runnable)
@@ -153,19 +127,11 @@ class MoreInfoAdapter : RecyclerView.Adapter<MoreInfoAdapter.Holder>() {
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_moreinfo, parent, false)
-        return Holder(view)
+        val binding = ItemMoreinfoBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return Holder(binding)
     }
 
-    class Holder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        var storeName = itemView.findViewById<TextView>(R.id.storeName)
-        var storeAddress = itemView.findViewById<TextView>(R.id.storeAddress)
-        var remain_stat = itemView.findViewById<TextView>(R.id.remain_stat)
-        var create_at = itemView.findViewById<TextView>(R.id.created_at)
-        var stock_at = itemView.findViewById<TextView>(R.id.stock_at)
-        var storeFavorite = itemView.findViewById<ImageView>(R.id.storeFavorite)
-    }
+    class Holder(val binding: ItemMoreinfoBinding) : RecyclerView.ViewHolder(binding.root) {}
 
     fun filter(text: String) {
         var charText = text.toLowerCase(Locale.getDefault())

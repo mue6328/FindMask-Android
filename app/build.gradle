@@ -6,13 +6,19 @@ apply plugin: 'kotlin-android-extensions'
 
 apply plugin: 'kotlin-kapt'
 
+
+
 android {
     compileSdkVersion 29
     buildToolsVersion "29.0.2"
 
+    viewBinding {
+        enabled = true
+    }
+
     defaultConfig {
         applicationId "com.example.findmask"
-        minSdkVersion 28
+        minSdkVersion 23
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"
