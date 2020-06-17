@@ -31,3 +31,20 @@ data class CoronaInfo(
     var updateTime: String,
     var resultMessage: String
 )
+
+data class CoronaInfoNew(
+    var resultCode: String,
+    var resultMessage: String,
+    var korea: newCase
+)
+
+data class newCase(
+    var countryName: String,
+    var newCase: String,
+    var totalCase: String,
+    var recovered: String,
+    var death: String,
+    var percentage: String,
+    var newFcase: String,
+    var newCcase: String
+)

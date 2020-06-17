@@ -3,6 +3,7 @@ package com.example.findmask.fragment
 import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
+import android.content.DialogInterface
 import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
@@ -15,6 +16,7 @@ import com.example.findmask.database.FavoriteDatabase
 import com.example.findmask.model.MoreInfo
 import java.util.ArrayList
 import android.util.Log
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
@@ -47,8 +49,6 @@ class FavoriteFragment : Fragment() {
         binding.favoriteRecyclerView.setHasFixedSize(true)
         binding.favoriteRecyclerView.adapter = favoriteAdapter
 
-        val activity = activity
-
         val runnable = Runnable {
                 favoriteList = favoriteDatabase?.favoriteDao()?.getFavorites()!!
         }
@@ -56,25 +56,24 @@ class FavoriteFragment : Fragment() {
         val thread = Thread(runnable)
         thread.start()
 
-
         try {
             val lm: LocationManager? =
-                activity!!.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+                requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager
             var location: Location? = null
 
                 location = lm!!.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
                 // 휴대폰
-//                var longitude = location!!.longitude
-//                var latitude = location!!.latitude
+                var longitude = location!!.longitude
+                var latitude = location!!.latitude
 
                 // 에뮬레이터 테스트
-                var longitude = 127.0342169
-                var latitude = 37.5010881
+//                var longitude = 127.0342169
+//                var latitude = 37.5010881
 
-                //var longitude = 128.568975
-                //var latitude = 35.8438071
+//                var longitude = 128.568975
+//                var latitude = 35.8438071
 
-            MaskService.getStoreByGeoInfo(latitude, longitude, 500).enqueue(object : Callback<MaskByGeoInfo>{
+            MaskService.getStoreByGeoInfo(latitude, longitude, 5000).enqueue(object : Callback<MaskByGeoInfo>{
                 override fun onFailure(call: Call<MaskByGeoInfo>, t: Throwable) {
 
                 }
@@ -100,15 +99,33 @@ class FavoriteFragment : Fragment() {
         }
 
         binding.deleteAll.setOnClickListener {
-            val runnable = Runnable {
-                favoriteDatabase?.favoriteDao()?.deleteAll()
+            if (favoriteList.isEmpty()) {
+                Log.d("listnull", "" + favoriteList.isEmpty())
             }
+            else {
+                Log.i("listqq", "" + favoriteList)
+                val runnable = Runnable {
+                    favoriteDatabase?.favoriteDao()?.deleteAll()
+                    favoriteList = removeList
+                }
 
-            val thread = Thread(runnable)
-            thread.start()
-            favoriteAdapter.setItem(removeList, view.context)
+                val thread = Thread(runnable)
+
+                AlertDialog.Builder(view.context)
+                    .setMessage("전체 삭제하시겠습니까?")
+                    .setPositiveButton(
+                        "예"
+                    ) { d: DialogInterface?, w: Int ->
+                        thread.start()
+                        favoriteAdapter.setItem(removeList, view.context)
+                    }
+                    .setNegativeButton(
+                        "아니오"
+                    ) { d: DialogInterface?, w: Int -> }
+                    .create()
+                    .show()
+            }
         }
-
         return view
     }
 }

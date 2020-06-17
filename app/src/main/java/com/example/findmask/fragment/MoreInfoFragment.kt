@@ -33,7 +33,9 @@ import java.util.*
 import kotlin.collections.ArrayList
 import android.widget.EditText
 import android.text.TextWatcher
+import androidx.core.view.isVisible
 import androidx.lifecycle.LiveData
+import androidx.transition.Visibility
 import com.example.findmask.database.FavoriteDatabase
 import com.example.findmask.databinding.FragmentMoreinfoBinding
 import kotlin.collections.HashSet
@@ -58,37 +60,15 @@ class MoreInfoFragment : Fragment() {
         val binding = FragmentMoreinfoBinding.inflate(inflater, container, false)
         val view = binding.root
 
-        var cal = Calendar.getInstance()
-        var week = cal.get(Calendar.DAY_OF_WEEK)
-
-        if (week == 1 || week == 7) {
-            binding.weekend.setTextColor(Color.rgb(0, 103, 163))
-        }
-        else if (week == 2) {
-            binding.monday.setTextColor(Color.rgb(0, 103, 163))
-        }
-        else if (week == 3) {
-            binding.tuesday.setTextColor(Color.rgb(0, 103, 163))
-        }
-        else if (week == 4) {
-            binding.wednesday.setTextColor(Color.rgb(0, 103, 163))
-        }
-        else if (week == 5) {
-            binding.thursday.setTextColor(Color.rgb(0, 103, 163))
-        }
-        else if (week == 6) {
-            binding.friday.setTextColor(Color.rgb(0, 103, 163))
-        }
-
-        var moreInfoRecyclerView: RecyclerView = view.findViewById(R.id.moreInfoRecyclerView)
+        var m: Int = 500
 
         var moreInfoAdapter = MoreInfoAdapter()
 
         val activity = activity
 
-        moreInfoRecyclerView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-        moreInfoRecyclerView.setHasFixedSize(true)
-        moreInfoRecyclerView.adapter = moreInfoAdapter
+        binding.moreInfoRecyclerView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+        binding.moreInfoRecyclerView.setHasFixedSize(true)
+        binding.moreInfoRecyclerView.adapter = moreInfoAdapter
 
         favoriteDatabase = FavoriteDatabase.getInstance(view.context)
 
@@ -115,26 +95,26 @@ class MoreInfoFragment : Fragment() {
 
         try {
             val lm: LocationManager? =
-                activity!!.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+                requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager
             var location: Location? = null
 
                 location = lm!!.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
                 // 휴대폰
-//                var longitude = location!!.longitude
-//                var latitude = location!!.latitude
+                var longitude = location!!.longitude
+                var latitude = location!!.latitude
 
                 // 에뮬레이터 테스트
-                var longitude = 127.0342169
-                var latitude = 37.5010881
+//                var longitude = 127.0342169
+//                var latitude = 37.5010881
 
 //                var longitude = 128.568975
 //                var latitude = 35.8438071
 
                 var isfavorite: Boolean = false
 
-                MaskService.getStoreByGeoInfo(latitude, longitude, 500).enqueue(object : Callback<MaskByGeoInfo> {
+                MaskService.getStoreByGeoInfo(latitude, longitude, m).enqueue(object : Callback<MaskByGeoInfo> {
                 override fun onFailure(call: Call<MaskByGeoInfo>, t: Throwable) {
-
+                    Log.d("error", t.toString())
                 }
 
                 override fun onResponse(
@@ -143,12 +123,43 @@ class MoreInfoFragment : Fragment() {
                 ) {
                     moreInfoList.clear()
                     moreInfoListFavorite.clear()
-                    if (favoriteList.isNotEmpty()) {
-                        for (j in favoriteList.indices) {
+                    Log.i(
+                        "listsize7",
+                        "" + favoriteList + response.body()!!.count + response.body()!!.stores
+                    )
+                    if (response.body()!!.stores.isEmpty() && response.code() == 200) {
+                        binding.searchFilter.visibility = View.GONE
+                        binding.maskSellInfo.visibility = View.VISIBLE
+                        binding.research.visibility = View.VISIBLE
+                    }
+                    else {
+                        if (favoriteList.isNotEmpty()) {
+                            Log.i("listsize3", "" + favoriteList)
+                            for (j in favoriteList.indices) {
+                                for (i in 0 until response.body()!!.count) {
+                                    isfavorite =
+                                        favoriteList[j].addr == response.body()!!.stores[i].addr
+                                    if (isfavorite && response.body()!!.stores[i].remain_stat != null) {
+                                        moreInfoListFavorite.add(
+                                            MoreInfo(
+                                                response.body()!!.stores[i].name,
+                                                response.body()!!.stores[i].addr,
+                                                response.body()!!.stores[i].remain_stat,
+                                                response.body()!!.stores[i].stock_at,
+                                                response.body()!!.stores[i].created_at,
+                                                isfavorite
+                                            )
+                                        )
+                                    }
+
+                                }
+                            }
+                        } else if (favoriteList.size == 0) {
                             for (i in 0 until response.body()!!.count) {
-                                isfavorite = favoriteList[j].addr == response.body()!!.stores[i].addr
-                                if(isfavorite) {
-                                    moreInfoListFavorite.add(
+                                if (response.body()!!.stores[i].remain_stat != null) {
+                                    isfavorite = false
+                                    Log.i("listsize2", "" + favoriteList)
+                                    moreInfoList.add(
                                         MoreInfo(
                                             response.body()!!.stores[i].name,
                                             response.body()!!.stores[i].addr,
@@ -156,72 +167,202 @@ class MoreInfoFragment : Fragment() {
                                             response.body()!!.stores[i].stock_at,
                                             response.body()!!.stores[i].created_at,
                                             isfavorite
-                                        ))
-                                }
-
-                            }
-                        }
-                    }
-                    else {
-                        for (i in 0 until response.body()!!.count) {
-                            isfavorite = false
-                            moreInfoList.add(
-                                MoreInfo(
-                                    response.body()!!.stores[i].name,
-                                    response.body()!!.stores[i].addr,
-                                    response.body()!!.stores[i].remain_stat,
-                                    response.body()!!.stores[i].stock_at,
-                                    response.body()!!.stores[i].created_at,
-                                    isfavorite
-                                )
-                            )
-                        }
-                    }
-
-                    for (k in 0 until response.body()!!.count) {
-                        Log.d("favoritesize", "" + moreInfoListFavorite.isNotEmpty() + response.body()!!.stores)
-                        if(moreInfoListFavorite.isNotEmpty() && response.body()!!.stores[k].remain_stat != null) {
-                            if(!moreInfoListFavorite.contains(MoreInfo(
-                                    response.body()!!.stores[k].name,
-                                    response.body()!!.stores[k].addr,
-                                    response.body()!!.stores[k].remain_stat,
-                                    response.body()!!.stores[k].stock_at,
-                                    response.body()!!.stores[k].created_at,
-                                    true))
-                            ) {
-                                moreInfoList.add(
-                                    MoreInfo(
-                                        response.body()!!.stores[k].name,
-                                        response.body()!!.stores[k].addr,
-                                        response.body()!!.stores[k].remain_stat,
-                                        response.body()!!.stores[k].stock_at,
-                                        response.body()!!.stores[k].created_at,
-                                        false
+                                        )
                                     )
-                                )
+                                }
                             }
                         }
-                        else if (response.body()!!.stores[k].remain_stat != null){
-                            moreInfoList.add(
-                                MoreInfo(
-                                    response.body()!!.stores[k].name,
-                                    response.body()!!.stores[k].addr,
-                                    response.body()!!.stores[k].remain_stat,
-                                    response.body()!!.stores[k].stock_at,
-                                    response.body()!!.stores[k].created_at,
-                                    false
-                                )
+
+                        for (k in 0 until response.body()!!.count) {
+                            Log.d(
+                                "favoritesize",
+                                "" + moreInfoListFavorite.isNotEmpty() + response.body()!!.stores
                             )
+                            if (moreInfoListFavorite.isNotEmpty() && response.body()!!.stores[k].remain_stat != null) {
+                                if (!moreInfoListFavorite.contains(
+                                        MoreInfo(
+                                            response.body()!!.stores[k].name,
+                                            response.body()!!.stores[k].addr,
+                                            response.body()!!.stores[k].remain_stat,
+                                            response.body()!!.stores[k].stock_at,
+                                            response.body()!!.stores[k].created_at,
+                                            true
+                                        )
+                                    )
+                                ) {
+                                    moreInfoList.add(
+                                        MoreInfo(
+                                            response.body()!!.stores[k].name,
+                                            response.body()!!.stores[k].addr,
+                                            response.body()!!.stores[k].remain_stat,
+                                            response.body()!!.stores[k].stock_at,
+                                            response.body()!!.stores[k].created_at,
+                                            false
+                                        )
+                                    )
+                                }
+                            }
                         }
+
+                        moreInfoListFavorite.addAll(moreInfoList)
+
+                        Log.i("listsize", "" + moreInfoListFavorite.size)
+
+                        moreInfoAdapter.setItem(moreInfoListFavorite, view.context)
                     }
-
-                    moreInfoListFavorite.addAll(moreInfoList)
-
-                    Log.i("listsize", "" + moreInfoListFavorite.size)
-
-                    moreInfoAdapter.setItem(moreInfoListFavorite, view.context)
                 }
             })
+
+            binding.research.setOnClickListener {
+                if (binding.research.text.contains("1km")) {
+                    m = 1000
+                    binding.maskSellInfo.visibility = View.GONE
+                    binding.research.visibility = View.GONE
+
+                    binding.searchFilter.hint = "찾고 싶은 병원 명을 입력하세요. (반경 1km)"
+                    binding.maskSellInfo.text = "반경 1km내에 판매처가 없습니다."
+                    binding.research.text = "2km로 재검색"
+                }
+                else if (binding.research.text.contains("2km")) {
+                    m = 2000
+                    binding.maskSellInfo.visibility = View.GONE
+                    binding.research.visibility = View.GONE
+
+                    binding.searchFilter.hint = "찾고 싶은 병원 명을 입력하세요. (반경 2km)"
+                    binding.maskSellInfo.text = "반경 2km내에 판매처가 없습니다."
+                    binding.research.text = "3km로 재검색"
+                }
+                else if (binding.research.text.contains("3km")) {
+                    m = 3000
+                    binding.maskSellInfo.visibility = View.GONE
+                    binding.research.visibility = View.GONE
+
+                    binding.searchFilter.hint = "찾고 싶은 병원 명을 입력하세요. (반경 3km)"
+                    binding.maskSellInfo.text = "반경 3km내에 판매처가 없습니다."
+                    binding.research.text = "4km로 재검색"
+                }
+                else if (binding.research.text.contains("4km")) {
+                    m = 4000
+                    binding.maskSellInfo.visibility = View.GONE
+                    binding.research.visibility = View.GONE
+
+                    binding.searchFilter.hint = "찾고 싶은 병원 명을 입력하세요. (반경 4km)"
+                    binding.maskSellInfo.text = "반경 4km내에 판매처가 없습니다."
+                    binding.research.text = "5km로 재검색"
+                }
+                else if (binding.research.text.contains("5km")) {
+                    m = 5000
+                    binding.maskSellInfo.visibility = View.GONE
+                    binding.research.visibility = View.GONE
+
+                    binding.searchFilter.hint = "찾고 싶은 병원 명을 입력하세요. (반경 5km)"
+                    binding.maskSellInfo.text = "반경 5km내에 판매처가 없습니다."
+                }
+                MaskService.getStoreByGeoInfo(latitude, longitude, m).enqueue(object : Callback<MaskByGeoInfo>{
+                    override fun onFailure(call: Call<MaskByGeoInfo>, t: Throwable) {
+                        Log.d("error", t.toString())
+                    }
+
+                    override fun onResponse(
+                        call: Call<MaskByGeoInfo>,
+                        response: Response<MaskByGeoInfo>
+                    ) {
+                        moreInfoList.clear()
+                        moreInfoListFavorite.clear()
+                        Log.i("listsize7", "" + favoriteList + response.body()!!.count + response.body()!!.stores)
+                        if (response.body()!!.stores.isEmpty() && response.code() == 200) {
+                            binding.searchFilter.visibility = View.GONE
+                            binding.maskSellInfo.visibility = View.VISIBLE
+                            if (m == 5000)
+                                binding.research.visibility = View.GONE
+                            else
+                                binding.research.visibility = View.VISIBLE
+                        }
+                        else {
+                            binding.searchFilter.visibility = View.VISIBLE
+                            binding.maskSellInfo.visibility = View.GONE
+                            binding.research.visibility = View.GONE
+                            if (favoriteList.isNotEmpty()) {
+                                Log.i("listsize3", "" + favoriteList)
+                                for (j in favoriteList.indices) {
+                                    for (i in 0 until response.body()!!.count) {
+                                        isfavorite =
+                                            favoriteList[j].addr == response.body()!!.stores[i].addr
+                                        if (isfavorite && response.body()!!.stores[i].remain_stat != null) {
+                                            moreInfoListFavorite.add(
+                                                MoreInfo(
+                                                    response.body()!!.stores[i].name,
+                                                    response.body()!!.stores[i].addr,
+                                                    response.body()!!.stores[i].remain_stat,
+                                                    response.body()!!.stores[i].stock_at,
+                                                    response.body()!!.stores[i].created_at,
+                                                    isfavorite
+                                                )
+                                            )
+                                        }
+
+                                    }
+                                }
+                            } else if (favoriteList.size == 0) {
+                                for (i in 0 until response.body()!!.count) {
+                                    if (response.body()!!.stores[i].remain_stat != null) {
+                                        isfavorite = false
+                                        Log.i("listsize2", "" + favoriteList)
+                                        moreInfoList.add(
+                                            MoreInfo(
+                                                response.body()!!.stores[i].name,
+                                                response.body()!!.stores[i].addr,
+                                                response.body()!!.stores[i].remain_stat,
+                                                response.body()!!.stores[i].stock_at,
+                                                response.body()!!.stores[i].created_at,
+                                                isfavorite
+                                            )
+                                        )
+                                    }
+                                }
+                            }
+
+                            for (k in 0 until response.body()!!.count) {
+                                Log.d(
+                                    "favoritesize",
+                                    "" + moreInfoListFavorite.isNotEmpty() + response.body()!!.stores
+                                )
+                                if (moreInfoListFavorite.isNotEmpty() && response.body()!!.stores[k].remain_stat != null) {
+                                    if (!moreInfoListFavorite.contains(
+                                            MoreInfo(
+                                                response.body()!!.stores[k].name,
+                                                response.body()!!.stores[k].addr,
+                                                response.body()!!.stores[k].remain_stat,
+                                                response.body()!!.stores[k].stock_at,
+                                                response.body()!!.stores[k].created_at,
+                                                true
+                                            )
+                                        )
+                                    ) {
+                                        moreInfoList.add(
+                                            MoreInfo(
+                                                response.body()!!.stores[k].name,
+                                                response.body()!!.stores[k].addr,
+                                                response.body()!!.stores[k].remain_stat,
+                                                response.body()!!.stores[k].stock_at,
+                                                response.body()!!.stores[k].created_at,
+                                                false
+                                            )
+                                        )
+                                    }
+                                }
+                            }
+
+                            moreInfoListFavorite.addAll(moreInfoList)
+
+                            Log.i("listsize", "" + moreInfoListFavorite.size)
+
+                            moreInfoAdapter.setItem(moreInfoListFavorite, view.context)
+                        }
+                    }
+
+                })
+            }
 
         } catch (e: SecurityException) {
             e.printStackTrace()

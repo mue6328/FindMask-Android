@@ -6,10 +6,9 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.example.findmask.model.Favorite
 import com.example.findmask.model.MoreInfo
 
-@Database(entities = [MoreInfo::class], version = 1)
+@Database(entities = [MoreInfo::class], version = 2)
 abstract class FavoriteDatabase: RoomDatabase() {
     abstract fun favoriteDao(): FavoriteDao
 
@@ -21,6 +20,7 @@ abstract class FavoriteDatabase: RoomDatabase() {
                 synchronized(FavoriteDatabase::class) {
                     instance = Room.databaseBuilder(context,
                         FavoriteDatabase::class.java, "favorite.db")
+                        .fallbackToDestructiveMigration()
                         .build()
                 }
             }

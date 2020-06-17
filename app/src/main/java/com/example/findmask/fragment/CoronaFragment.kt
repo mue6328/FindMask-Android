@@ -29,6 +29,10 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.util.ArrayList
+import android.content.SharedPreferences;
+import androidx.preference.PreferenceManager
+import android.content.Context
+import com.example.findmask.model.CoronaInfoNew
 
 class CoronaFragment : Fragment() {
     private var colors = ArrayList<Int>()
@@ -82,6 +86,18 @@ class CoronaFragment : Fragment() {
                     }
                 }
             })
+
+        CoronaService.getCoronaInfoNew(Utils.API_KEY).enqueue(object : Callback<CoronaInfoNew> {
+            override fun onFailure(call: Call<CoronaInfoNew>, t: Throwable) {
+                Log.d("error", t.toString())
+            }
+
+            override fun onResponse(call: Call<CoronaInfoNew>, response: Response<CoronaInfoNew>) {
+                Log.d("newcase", response.body().toString())
+                binding.todayCase.text = "전일 대비 + " + response.body()!!.korea.newCase + "명"
+            }
+
+        })
 
         return view
     }

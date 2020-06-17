@@ -66,14 +66,16 @@ class MainFragment : Fragment() {
         }
 
             try {
-                val lm : LocationManager? = activity!!.getSystemService(LOCATION_SERVICE) as LocationManager
+                val lm : LocationManager? = requireActivity().getSystemService(LOCATION_SERVICE) as LocationManager
                 var location : Location? = null
 
                 if (Build.VERSION.SDK_INT >= 23 &&
-                    ContextCompat.checkSelfPermission(activity!!.applicationContext,
+                    ContextCompat.checkSelfPermission(requireActivity().applicationContext,
                         android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(activity, arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION),
-                        0)
+                    if (activity != null) {
+                        ActivityCompat.requestPermissions(requireActivity(), arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION),
+                            0)
+                    }
                 }
                 else {
                     location = lm!!.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
