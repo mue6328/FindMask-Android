@@ -13,21 +13,23 @@ class CoronaService {
         @GET("korea/")
         fun getCoronaInfo(
             @Query("serviceKey") serviceKey: String
-        ) : Call<CoronaInfo>
+        ): Call<CoronaInfo>
 
         @GET("korea/country/new/")
         fun getCoronaInfoNew(
             @Query("serviceKey") serviceKey: String
-        ) : Call<CoronaInfoNew>
+        ): Call<CoronaInfoNew>
     }
 
     companion object {
-        fun getCoronaInfo(serviceKey: String) : Call<CoronaInfo> {
-            return Utils.retrofit_CORONA.create(CoronaServiceImpl::class.java).getCoronaInfo(serviceKey)
+        fun getCoronaInfo(serviceKey: String): Call<CoronaInfo> {
+            return Utils.retrofit_CORONA.create(CoronaServiceImpl::class.java)
+                .getCoronaInfo(serviceKey)
         }
 
-        fun getCoronaInfoNew(serviceKey: String) : Call<CoronaInfoNew> {
-            return Utils.retrofit_CORONA.create(CoronaServiceImpl::class.java).getCoronaInfoNew(serviceKey)
+        fun getCoronaInfoNew(serviceKey: String): Call<CoronaInfoNew> {
+            return Utils.retrofit_CORONA.create(CoronaServiceImpl::class.java)
+                .getCoronaInfoNew(serviceKey)
         }
     }
 

@@ -52,7 +52,8 @@ class MainFragment : Fragment() {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+    ): View? {
         val binding = FragmentMainBinding.inflate(inflater, container, false)
         val view = binding.root
 
@@ -65,129 +66,140 @@ class MainFragment : Fragment() {
             mask_cardView.visibility = View.GONE
         }
 
-            try {
-                val lm : LocationManager? = requireActivity().getSystemService(LOCATION_SERVICE) as LocationManager
-                var location : Location? = null
+        try {
+            val lm: LocationManager? =
+                requireActivity().getSystemService(LOCATION_SERVICE) as LocationManager
+            var location: Location? = null
 
-                if (Build.VERSION.SDK_INT >= 23 &&
-                    ContextCompat.checkSelfPermission(requireActivity().applicationContext,
-                        android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    if (activity != null) {
-                        ActivityCompat.requestPermissions(requireActivity(), arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION),
-                            0)
-                    }
+            if (Build.VERSION.SDK_INT >= 23 &&
+                ContextCompat.checkSelfPermission(
+                    requireActivity().applicationContext,
+                    android.Manifest.permission.ACCESS_FINE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                if (activity != null) {
+                    ActivityCompat.requestPermissions(
+                        requireActivity(),
+                        arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION),
+                        0
+                    )
                 }
-                else {
-                    location = lm!!.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
-                    // 에뮬레이터 테스트
-                    //var longitude = 127.0342169
-                    //var latitude = 37.5010881
+            } else {
+                location = lm!!.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
+                // 에뮬레이터 테스트
+                //var longitude = 127.0342169
+                //var latitude = 37.5010881
 
-                    // 휴대폰
-                    var longitude = location!!.longitude
-                    var latitude = location!!.latitude
+                // 휴대폰
+                var longitude = location!!.longitude
+                var latitude = location!!.latitude
 
-                    val mapView = MapView(activity)
+                val mapView = MapView(activity)
 
-                    val mapViewContainer = binding.mapView as ViewGroup
+                val mapViewContainer = binding.mapView as ViewGroup
 
-                    mapView.setMapCenterPoint(MapPoint.mapPointWithGeoCoord(latitude, longitude), true)
+                mapView.setMapCenterPoint(MapPoint.mapPointWithGeoCoord(latitude, longitude), true)
 
-                    mapViewContainer.addView(mapView)
+                mapViewContainer.addView(mapView)
 
-                    var marker = MapPOIItem()
-                    marker.itemName = "현재 위치"
-                    marker.mapPoint = MapPoint.mapPointWithGeoCoord(latitude, longitude)
-                    marker.customImageResourceId = R.drawable.baseline_fiber_manual_record_black_24dp
-                    marker.markerType = MapPOIItem.MarkerType.CustomImage
+                var marker = MapPOIItem()
+                marker.run {
+                    itemName = "현재 위치"
+                    mapPoint = MapPoint.mapPointWithGeoCoord(latitude, longitude)
+                    customImageResourceId = R.drawable.baseline_fiber_manual_record_black_24dp
+                    markerType = MapPOIItem.MarkerType.CustomImage
+                }
 
-                    MaskService.getStoreByGeoInfo(latitude, longitude, 5000).enqueue(object :
-                        Callback<MaskByGeoInfo> {
-                        override fun onFailure(call: Call<MaskByGeoInfo>, t: Throwable) {
-                            Log.d("error",t.toString())
-                        }
+                MaskService.getStoreByGeoInfo(latitude, longitude, 5000).enqueue(object :
+                    Callback<MaskByGeoInfo> {
+                    override fun onFailure(call: Call<MaskByGeoInfo>, t: Throwable) {
+                        Log.d("error", t.toString())
+                    }
 
-                        override fun onResponse(
-                            call: Call<MaskByGeoInfo>,
-                            response: Response<MaskByGeoInfo>
-                        ) {
-                            for (i in 0 until response.body()!!.count) {
-                                if (response.body()!!.stores[i].remain_stat == "plenty") {
-                                    shopMarker.markerType = MapPOIItem.MarkerType.BluePin
-                                    remain_stat = "충분"
-                                } else if (response.body()!!.stores[i].remain_stat == "some") {
-                                    shopMarker.markerType = MapPOIItem.MarkerType.YellowPin
-                                    remain_stat = "보통"
-                                } else if (response.body()!!.stores[i].remain_stat == "few") {
-                                    shopMarker.markerType = MapPOIItem.MarkerType.RedPin
-                                    remain_stat = "부족"
-                                } else if (response.body()!!.stores[i].remain_stat == "empty") {
-                                    shopMarker.markerType = MapPOIItem.MarkerType.CustomImage
-                                    remain_stat = "없음"
-                                } else {
-                                    shopMarker.markerType = MapPOIItem.MarkerType.CustomImage
-                                    remain_stat = "판매중지"
-                                }
-
-                                shopMarker.itemName =
-                                    remain_stat + " / " + response.body()!!.stores[i].name
-                                shopMarker.mapPoint = MapPoint.mapPointWithGeoCoord(
+                    override fun onResponse(
+                        call: Call<MaskByGeoInfo>,
+                        response: Response<MaskByGeoInfo>
+                    ) {
+                        for (i in 0 until response.body()!!.count) {
+                            if (response.body()!!.stores[i].remain_stat == "plenty") {
+                                shopMarker.markerType = MapPOIItem.MarkerType.BluePin
+                                remain_stat = "충분"
+                            } else if (response.body()!!.stores[i].remain_stat == "some") {
+                                shopMarker.markerType = MapPOIItem.MarkerType.YellowPin
+                                remain_stat = "보통"
+                            } else if (response.body()!!.stores[i].remain_stat == "few") {
+                                shopMarker.markerType = MapPOIItem.MarkerType.RedPin
+                                remain_stat = "부족"
+                            } else if (response.body()!!.stores[i].remain_stat == "empty") {
+                                shopMarker.markerType = MapPOIItem.MarkerType.CustomImage
+                                remain_stat = "없음"
+                            } else {
+                                shopMarker.markerType = MapPOIItem.MarkerType.CustomImage
+                                remain_stat = "판매중지"
+                            }
+                            shopMarker.run {
+                                itemName = remain_stat + " / " + response.body()!!.stores[i].name
+                                mapPoint = MapPoint.mapPointWithGeoCoord(
                                     response.body()!!.stores[i].lat.toDouble(),
-                                    response.body()!!.stores[i].lng.toDouble()
-                                )
-                                shopMarker.customImageResourceId = R.drawable.baseline_room_black_36dp
-
-                                mapView.addPOIItem(shopMarker)
+                                    response.body()!!.stores[i].lng.toDouble())
+                                customImageResourceId = R.drawable.baseline_room_black_36dp
                             }
+
+                            mapView.addPOIItem(shopMarker)
                         }
-                        })
-
-                            val locationListener: LocationListener = object : LocationListener {
-                                override fun onLocationChanged(location: Location?) {
-                                    if (location != null) {
-                                        longitude = location!!.longitude
-                                        latitude = location!!.latitude
-
-                                        mapView.removePOIItem(marker)
-
-                                        marker.mapPoint = MapPoint.mapPointWithGeoCoord(latitude, longitude)
-                                        mapView.addPOIItem(marker)
-                                    }
-                                }
-
-                                override fun onStatusChanged(p0: String?, p1: Int, p2: Bundle?) {
-
-                                }
-
-                                override fun onProviderEnabled(p0: String?) {
-
-                                }
-
-                                override fun onProviderDisabled(p0: String?) {
-
-                                }
-
-                            }
-
-                    lm.requestLocationUpdates(
-                        LocationManager.GPS_PROVIDER,
-                        1000,
-                        1f,
-                        locationListener)
-                    lm.requestLocationUpdates(
-                        LocationManager.NETWORK_PROVIDER,
-                        1000,
-                        1f,
-                        locationListener)
-
-                    binding.centerPoint.setOnClickListener {
-                        mapView.setMapCenterPoint(MapPoint.mapPointWithGeoCoord(latitude, longitude), true)
                     }
+                })
+
+                val locationListener: LocationListener = object : LocationListener {
+                    override fun onLocationChanged(location: Location?) {
+                        if (location != null) {
+                            longitude = location!!.longitude
+                            latitude = location!!.latitude
+
+                            mapView.removePOIItem(marker)
+
+                            marker.mapPoint = MapPoint.mapPointWithGeoCoord(latitude, longitude)
+                            mapView.addPOIItem(marker)
+                        }
+                    }
+
+                    override fun onStatusChanged(p0: String?, p1: Int, p2: Bundle?) {
+
+                    }
+
+                    override fun onProviderEnabled(p0: String?) {
+
+                    }
+
+                    override fun onProviderDisabled(p0: String?) {
+
+                    }
+
+                }
+
+                lm.requestLocationUpdates(
+                    LocationManager.GPS_PROVIDER,
+                    1000,
+                    1f,
+                    locationListener
+                )
+                lm.requestLocationUpdates(
+                    LocationManager.NETWORK_PROVIDER,
+                    1000,
+                    1f,
+                    locationListener
+                )
+
+                binding.centerPoint.setOnClickListener {
+                    mapView.setMapCenterPoint(
+                        MapPoint.mapPointWithGeoCoord(latitude, longitude),
+                        true
+                    )
                 }
             }
-            catch (e: Exception) {
-                e.printStackTrace()
-            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
 
         return view
     }

@@ -6,19 +6,19 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy.REPLACE
 import androidx.room.Query
-import com.example.findmask.model.MoreInfo
+import com.example.findmask.model.CoronaArea
 
 @Dao
-interface FavoriteDao {
-    @Query("SELECT * FROM MoreInfo ORDER BY name ASC")
-    fun getFavorites(): LiveData<List<MoreInfo>>
+interface CoronaAreaDao {
+    @Query("SELECT * FROM CoronaArea ORDER BY areaName ASC")
+    fun getAreas(): LiveData<List<CoronaArea>>
 
     @Insert(onConflict = REPLACE)
-    fun insert(moreInfo: MoreInfo)
+    fun insert(coronaArea: CoronaArea)
 
     @Delete
-    fun delete(moreInfo: MoreInfo)
+    fun delete(coronaArea: CoronaArea)
 
-    @Query("DELETE from MoreInfo")
+    @Query("DELETE from CoronaArea")
     fun deleteAll()
 }

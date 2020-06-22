@@ -1,5 +1,8 @@
 package com.example.findmask.model
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
 data class CoronaInfo(
     var resultCode: String,
     var TotalCase: String,
@@ -32,13 +35,241 @@ data class CoronaInfo(
     var resultMessage: String
 )
 
+@Entity
+data class CoronaArea(
+    @PrimaryKey
+    var areaName: String,
+    var newCase: String,
+    var newFcase: String,
+    var newCcase: String,
+    var totalCase: String,
+    var recovered: String,
+    var death: String
+)
+
 data class CoronaInfoNew(
     var resultCode: String,
     var resultMessage: String,
-    var korea: newCase
+    var korea: Korea,
+    var seoul: Seoul,
+    var busan: Busan,
+    var daegu: Daegu,
+    var incheon: Incheon,
+    var gwangju: Gwangju,
+    var daejeon: Daejeon,
+    var ulsan: Ulsan,
+    var sejong: Sejong,
+    var gyeonggi: Gyeonggi,
+    var gangwon: Gangwon,
+    var chungbuk: ChungBuk,
+    var chungnam: ChungNam,
+    var jeonbuk: Jeonbuk,
+    var jeonnam: Jeonnam,
+    var gyeongbuk: Gyeongbuk,
+    var gyeongnam: Gyeongnam,
+    var jeju: Jeju,
+    var quarantine: Quarantine
 )
 
-data class newCase(
+data class Korea(
+    var countryName: String,
+    var newCase: String,
+    var totalCase: String,
+    var recovered: String,
+    var death: String,
+    var percentage: String,
+    var newFcase: String,
+    var newCcase: String
+)
+
+data class Seoul(
+    var countryName: String,
+    var newCase: String,
+    var totalCase: String,
+    var recovered: String,
+    var death: String,
+    var percentage: String,
+    var newFcase: String,
+    var newCcase: String
+)
+
+data class Busan(
+    var countryName: String,
+    var newCase: String,
+    var totalCase: String,
+    var recovered: String,
+    var death: String,
+    var percentage: String,
+    var newFcase: String,
+    var newCcase: String
+)
+
+data class Daegu(
+    var countryName: String,
+    var newCase: String,
+    var totalCase: String,
+    var recovered: String,
+    var death: String,
+    var percentage: String,
+    var newFcase: String,
+    var newCcase: String
+)
+
+data class Incheon(
+    var countryName: String,
+    var newCase: String,
+    var totalCase: String,
+    var recovered: String,
+    var death: String,
+    var percentage: String,
+    var newFcase: String,
+    var newCcase: String
+)
+
+data class Gwangju(
+    var countryName: String,
+    var newCase: String,
+    var totalCase: String,
+    var recovered: String,
+    var death: String,
+    var percentage: String,
+    var newFcase: String,
+    var newCcase: String
+)
+
+data class Daejeon(
+    var countryName: String,
+    var newCase: String,
+    var totalCase: String,
+    var recovered: String,
+    var death: String,
+    var percentage: String,
+    var newFcase: String,
+    var newCcase: String
+)
+
+data class Ulsan(
+    var countryName: String,
+    var newCase: String,
+    var totalCase: String,
+    var recovered: String,
+    var death: String,
+    var percentage: String,
+    var newFcase: String,
+    var newCcase: String
+)
+
+data class Sejong(
+    var countryName: String,
+    var newCase: String,
+    var totalCase: String,
+    var recovered: String,
+    var death: String,
+    var percentage: String,
+    var newFcase: String,
+    var newCcase: String
+)
+
+data class Gyeonggi(
+    var countryName: String,
+    var newCase: String,
+    var totalCase: String,
+    var recovered: String,
+    var death: String,
+    var percentage: String,
+    var newFcase: String,
+    var newCcase: String
+)
+
+data class Gangwon(
+    var countryName: String,
+    var newCase: String,
+    var totalCase: String,
+    var recovered: String,
+    var death: String,
+    var percentage: String,
+    var newFcase: String,
+    var newCcase: String
+)
+
+data class ChungBuk(
+    var countryName: String,
+    var newCase: String,
+    var totalCase: String,
+    var recovered: String,
+    var death: String,
+    var percentage: String,
+    var newFcase: String,
+    var newCcase: String
+)
+
+data class ChungNam(
+    var countryName: String,
+    var newCase: String,
+    var totalCase: String,
+    var recovered: String,
+    var death: String,
+    var percentage: String,
+    var newFcase: String,
+    var newCcase: String
+)
+
+data class Jeonbuk(
+    var countryName: String,
+    var newCase: String,
+    var totalCase: String,
+    var recovered: String,
+    var death: String,
+    var percentage: String,
+    var newFcase: String,
+    var newCcase: String
+)
+
+data class Jeonnam(
+    var countryName: String,
+    var newCase: String,
+    var totalCase: String,
+    var recovered: String,
+    var death: String,
+    var percentage: String,
+    var newFcase: String,
+    var newCcase: String
+)
+
+data class Gyeongbuk(
+    var countryName: String,
+    var newCase: String,
+    var totalCase: String,
+    var recovered: String,
+    var death: String,
+    var percentage: String,
+    var newFcase: String,
+    var newCcase: String
+)
+
+data class Gyeongnam(
+    var countryName: String,
+    var newCase: String,
+    var totalCase: String,
+    var recovered: String,
+    var death: String,
+    var percentage: String,
+    var newFcase: String,
+    var newCcase: String
+)
+
+data class Jeju(
+    var countryName: String,
+    var newCase: String,
+    var totalCase: String,
+    var recovered: String,
+    var death: String,
+    var percentage: String,
+    var newFcase: String,
+    var newCcase: String
+)
+
+data class Quarantine(
     var countryName: String,
     var newCase: String,
     var totalCase: String,

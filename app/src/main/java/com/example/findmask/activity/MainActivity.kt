@@ -11,10 +11,7 @@ import android.view.MenuItem
 import android.view.View
 import androidx.annotation.RequiresApi
 import com.example.findmask.R
-import com.example.findmask.fragment.CoronaFragment
-import com.example.findmask.fragment.FavoriteFragment
-import com.example.findmask.fragment.MoreInfoFragment
-import com.example.findmask.fragment.MainFragment
+import com.example.findmask.fragment.*
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
@@ -22,6 +19,7 @@ import java.security.NoSuchAlgorithmException
 class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemSelectedListener {
     private val mainFragment = MainFragment()
     private val coronaFragment = CoronaFragment()
+    private val coronaAreaFragment = CoronaAreaFragment()
     private val moreInfoFragment = MoreInfoFragment()
     private val favoriteFragment = FavoriteFragment()
 
@@ -41,7 +39,8 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
     @RequiresApi(Build.VERSION_CODES.P)
     private fun getHashKey() {
         try {
-            var info : PackageInfo = packageManager.getPackageInfo(packageName, PackageManager.GET_SIGNING_CERTIFICATES)
+            var info: PackageInfo =
+                packageManager.getPackageInfo(packageName, PackageManager.GET_SIGNING_CERTIFICATES)
             val signatures = info.signingInfo.apkContentsSigners
             for (signature in signatures) {
                 var md: MessageDigest = MessageDigest.getInstance("SHA")
@@ -56,20 +55,27 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
     }
 
 
-
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        when(item.itemId) {
+        when (item.itemId) {
             R.id.action_main -> {
-                supportFragmentManager.beginTransaction().replace(R.id.frameLayout, mainFragment).commitAllowingStateLoss()
+                supportFragmentManager.beginTransaction().replace(R.id.frameLayout, mainFragment)
+                    .commitAllowingStateLoss()
             }
             R.id.action_corona -> {
-                supportFragmentManager.beginTransaction().replace(R.id.frameLayout, coronaFragment).commitAllowingStateLoss()
+                supportFragmentManager.beginTransaction().replace(R.id.frameLayout, coronaFragment)
+                    .commitAllowingStateLoss()
+            }
+            R.id.action_corona_area -> {
+                supportFragmentManager.beginTransaction().replace(R.id.frameLayout, coronaAreaFragment)
+                    .commitAllowingStateLoss()
             }
             R.id.action_MoreInfo -> {
-                supportFragmentManager.beginTransaction().replace(R.id.frameLayout, moreInfoFragment).commitAllowingStateLoss()
+                supportFragmentManager.beginTransaction()
+                    .replace(R.id.frameLayout, moreInfoFragment).commitAllowingStateLoss()
             }
             R.id.action_Favorite -> {
-                supportFragmentManager.beginTransaction().replace(R.id.frameLayout, favoriteFragment).commitAllowingStateLoss()
+                supportFragmentManager.beginTransaction()
+                    .replace(R.id.frameLayout, favoriteFragment).commitAllowingStateLoss()
             }
         }
         return true

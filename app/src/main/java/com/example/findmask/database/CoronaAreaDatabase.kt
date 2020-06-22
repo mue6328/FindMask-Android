@@ -6,21 +6,22 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.example.findmask.model.MoreInfo
+import com.example.findmask.dao.CoronaAreaDao
+import com.example.findmask.model.CoronaArea
 
-@Database(entities = [MoreInfo::class], version = 2)
-abstract class FavoriteDatabase : RoomDatabase() {
-    abstract fun favoriteDao(): FavoriteDao
+@Database(entities = [CoronaArea::class], version = 2)
+abstract class CoronaAreaDatabase : RoomDatabase() {
+    abstract fun coronaAreaDao(): CoronaAreaDao
 
     companion object {
-        private var instance: FavoriteDatabase? = null
+        private var instance: CoronaAreaDatabase? = null
 
-        fun getInstance(context: Context): FavoriteDatabase? {
+        fun getInstance(context: Context): CoronaAreaDatabase? {
             if (instance == null) {
-                synchronized(FavoriteDatabase::class) {
+                synchronized(CoronaAreaDatabase::class) {
                     instance = Room.databaseBuilder(
                         context,
-                        FavoriteDatabase::class.java, "favorite.db"
+                        CoronaAreaDatabase::class.java, "corona.db"
                     )
                         .fallbackToDestructiveMigration()
                         .build()

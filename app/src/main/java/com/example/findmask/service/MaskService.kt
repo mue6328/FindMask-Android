@@ -14,19 +14,20 @@ class MaskService {
         fun getStoresInfo(
             @Query("page") page: Int,
             @Query("perPage") perPage: Int
-        ) : Call<MaskInfo>
+        ): Call<MaskInfo>
 
         @GET("storesByGeo/json?")
         fun getStoreByGeoInfo(
             @Query("lat") lat: Number,
             @Query("lng") lng: Number,
             @Query("m") m: Int
-        ) : Call<MaskByGeoInfo>
+        ): Call<MaskByGeoInfo>
     }
 
     companion object {
         fun getStoreByGeoInfo(lat: Number, lng: Number, m: Int): Call<MaskByGeoInfo> {
-            return Utils.retrofit_MASK.create(MaskServiceImpl::class.java).getStoreByGeoInfo(lat, lng, m)
+            return Utils.retrofit_MASK.create(MaskServiceImpl::class.java)
+                .getStoreByGeoInfo(lat, lng, m)
         }
     }
 }

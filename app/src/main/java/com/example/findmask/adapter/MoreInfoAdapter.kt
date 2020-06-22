@@ -31,10 +31,10 @@ class MoreInfoAdapter : RecyclerView.Adapter<MoreInfoAdapter.Holder>() {
     private var favoriteDatabase: FavoriteDatabase? = null
 
     fun setItem(list: ArrayList<MoreInfo>, context: Context) {
-            this.storeSale = list
-            this.context = context
-            this.storelist.addAll(storeSale)
-            notifyDataSetChanged()
+        this.storeSale = list
+        this.context = context
+        this.storelist.addAll(storeSale)
+        notifyDataSetChanged()
     }
 
     override fun getItemCount(): Int {
@@ -48,20 +48,16 @@ class MoreInfoAdapter : RecyclerView.Adapter<MoreInfoAdapter.Holder>() {
         if (storeSale[position].remain_stat == "plenty") {
             holder.binding.remainStat.text = "100개 이상"
             holder.binding.remainStat.setTextColor(Color.parseColor("#32CD32"))
-        }
-        else if(storeSale[position].remain_stat == "some") {
+        } else if (storeSale[position].remain_stat == "some") {
             holder.binding.remainStat.text = "30~99개"
             holder.binding.remainStat.setTextColor(Color.parseColor("#ff7f00"))
-        }
-        else if(storeSale[position].remain_stat == "few") {
+        } else if (storeSale[position].remain_stat == "few") {
             holder.binding.remainStat.text = "2~29개"
             holder.binding.remainStat.setTextColor(Color.parseColor("#ff0000"))
-        }
-        else if(storeSale[position].remain_stat == "empty") {
+        } else if (storeSale[position].remain_stat == "empty") {
             holder.binding.remainStat.text = "0~1개"
             holder.binding.remainStat.setTextColor(Color.parseColor("#000000"))
-        }
-        else if(storeSale[position].remain_stat == "break") {
+        } else if (storeSale[position].remain_stat == "break") {
             holder.binding.remainStat.text = "판매중지"
             holder.binding.remainStat.setTextColor(Color.parseColor("#808080"))
         }
@@ -71,8 +67,7 @@ class MoreInfoAdapter : RecyclerView.Adapter<MoreInfoAdapter.Holder>() {
 
         if (storeSale[position].isfavorite) {
             holder.binding.storeFavorite.setImageResource(R.drawable.ic_star)
-        }
-        else {
+        } else {
             holder.binding.storeFavorite.setImageResource(R.drawable.ic_star_border_black_24dp)
         }
 
@@ -82,34 +77,18 @@ class MoreInfoAdapter : RecyclerView.Adapter<MoreInfoAdapter.Holder>() {
             var toast = ""
 
             val runnable = Runnable {
-//                if (storeSale[position].remain_stat == "plenty") {
-//                    holder.binding.remainStat.text = "100개 이상"
-//                    holder.binding.remainStat.setTextColor(Color.parseColor("#32CD32"))
-//                }
-//                else if(storeSale[position].remain_stat == "some") {
-//                    holder.binding.remainStat.text = "30~99개"
-//                    holder.binding.remainStat.setTextColor(Color.parseColor("#ff7f00"))
-//                }
-//                else if(storeSale[position].remain_stat == "few") {
-//                    holder.binding.remainStat.text = "2~29개"
-//                    holder.binding.remainStat.setTextColor(Color.parseColor("#ff0000"))
-//                }
-//                else if(storeSale[position].remain_stat == "empty") {
-//                    holder.binding.remainStat.text = "0~1개"
-//                    holder.binding.remainStat.setTextColor(Color.parseColor("#000000"))
-//                }
-//                else if(storeSale[position].remain_stat == "break") {
-//                    holder.binding.remainStat.text = "판매중지"
-//                    holder.binding.remainStat.setTextColor(Color.parseColor("#808080"))
-//                }
-
-                val store = MoreInfo(storeSale[position].name, storeSale[position].addr,
-                    storeSale[position].remain_stat, storeSale[position].stock_at, storeSale[position].created_at, true)
+                val store = MoreInfo(
+                    storeSale[position].name,
+                    storeSale[position].addr,
+                    storeSale[position].remain_stat,
+                    storeSale[position].stock_at,
+                    storeSale[position].created_at,
+                    true
+                )
                 if (storeSale[position].isfavorite) {
                     favoriteDatabase?.favoriteDao()?.delete(storeSale[position])
                     this.storeSale[position].isfavorite = false
-                }
-                else {
+                } else {
                     favoriteDatabase?.favoriteDao()?.insert(store)
                     this.storeSale[position].isfavorite = true
                 }
@@ -127,7 +106,8 @@ class MoreInfoAdapter : RecyclerView.Adapter<MoreInfoAdapter.Holder>() {
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
-        val binding = ItemMoreinfoBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding =
+            ItemMoreinfoBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return Holder(binding)
     }
 
@@ -139,7 +119,7 @@ class MoreInfoAdapter : RecyclerView.Adapter<MoreInfoAdapter.Holder>() {
         if (charText.length == 0) {
             storeSale.addAll(storelist)
         } else {
-            for (moreinfo : MoreInfo in storelist) {
+            for (moreinfo: MoreInfo in storelist) {
                 var name = moreinfo.name
                 if (name.toLowerCase().contains(charText)) {
                     storeSale.add(moreinfo)

@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="225dp"
+    xmlns:card_view="http://schemas.android.com/tools"
+    app:cardCornerRadius="10dp"
+    android:layout_margin="8dp"
+    app:contentPadding="4dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/moreInfo"
+        android:layout_width="match_parent"
+        android:layout_height="225dp"
+        android:background="#FFFFFF"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <TextView
+            android:id="@+id/areaName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:text="대구"
+            android:textColor="#000000"
+            android:textSize="18dp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/newCase"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:text="오늘 확진자 수 : "
+            android:textColor="#000000"
+            android:textSize="18dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/areaName" />
+
+        <TextView
+            android:id="@+id/newCasePersons"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#000000"
+            android:textSize="18dp"
+            android:textStyle="bold"
+            android:text="10 명(해외 8명, 지역 2명)"
+            android:layout_marginStart="8dp"
+            app:layout_constraintBottom_toBottomOf="@+id/newCase"
+            app:layout_constraintStart_toEndOf="@+id/newCase"
+            app:layout_constraintTop_toTopOf="@+id/newCase" />
+
+        <TextView
+            android:id="@+id/totalCase"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            android:text="누적 확진 환자 : "
+            android:textColor="#000000"
+            android:textSize="18dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/newCase" />
+
+        <TextView
+            android:id="@+id/totalCasePersons"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#000000"
+            android:textSize="18dp"
+            android:textStyle="bold"
+            android:text="6,894 명"
+            android:layout_marginStart="8dp"
+            app:layout_constraintBottom_toBottomOf="@+id/totalCase"
+            app:layout_constraintStart_toEndOf="@+id/totalCase"
+            app:layout_constraintTop_toTopOf="@+id/totalCase"
+            />
+
+        <TextView
+            android:id="@+id/recovered"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:text="격리 해제 : "
+            android:textColor="#000000"
+            android:textSize="18dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/totalCase" />
+
+        <TextView
+            android:id="@+id/recoveredPersons"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#000000"
+            android:textSize="18dp"
+            android:textStyle="bold"
+            android:text="6,671 명"
+            android:layout_marginStart="8dp"
+            app:layout_constraintBottom_toBottomOf="@+id/recovered"
+            app:layout_constraintStart_toEndOf="@+id/recovered"
+            app:layout_constraintTop_toTopOf="@+id/recovered"
+            />
+
+        <TextView
+            android:id="@+id/covered"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:text="격리 중 : "
+            android:textColor="#000000"
+            android:textSize="18dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/recovered" />
+
+        <TextView
+            android:id="@+id/coveredPersons"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#000000"
+            android:textSize="18dp"
+            android:textStyle="bold"
+            android:text="34 명"
+            android:layout_marginStart="8dp"
+            app:layout_constraintBottom_toBottomOf="@+id/covered"
+            app:layout_constraintStart_toEndOf="@+id/covered"
+            app:layout_constraintTop_toTopOf="@+id/covered"
+            />
+
+        <TextView
+            android:id="@+id/death"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:text="사망 : "
+            android:textColor="#000000"
+            android:textSize="18dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/covered" />
+
+        <TextView
+            android:id="@+id/deathPersons"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#000000"
+            android:textSize="18dp"
+            android:textStyle="bold"
+            android:text="189 명"
+            android:layout_marginStart="8dp"
+            app:layout_constraintBottom_toBottomOf="@+id/death"
+            app:layout_constraintStart_toEndOf="@+id/death"
+            app:layout_constraintTop_toTopOf="@+id/death"
+            />
+
+        <ImageView
+            android:id="@+id/delete"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:src="@drawable/ic_delete_black_24dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.cardview.widget.CardView>

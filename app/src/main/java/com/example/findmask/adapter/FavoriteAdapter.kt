@@ -26,9 +26,9 @@ class FavoriteAdapter : RecyclerView.Adapter<FavoriteAdapter.Holder>() {
     private var favoriteDatabase: FavoriteDatabase? = null
 
     fun setItem(list: List<MoreInfo>, context: Context) {
-            this.storeSale = list
-            this.context = context
-            notifyDataSetChanged()
+        this.storeSale = list
+        this.context = context
+        notifyDataSetChanged()
     }
 
     override fun getItemCount(): Int {
@@ -42,20 +42,16 @@ class FavoriteAdapter : RecyclerView.Adapter<FavoriteAdapter.Holder>() {
         if (storeSale[position].remain_stat == "plenty") {
             holder.binding.remainStat.text = "100개 이상"
             holder.binding.remainStat.setTextColor(Color.parseColor("#32CD32"))
-        }
-        else if(storeSale[position].remain_stat == "some") {
+        } else if (storeSale[position].remain_stat == "some") {
             holder.binding.remainStat.text = "30~99개"
             holder.binding.remainStat.setTextColor(Color.parseColor("#ff7f00"))
-        }
-        else if(storeSale[position].remain_stat == "few") {
+        } else if (storeSale[position].remain_stat == "few") {
             holder.binding.remainStat.text = "2~29개"
             holder.binding.remainStat.setTextColor(Color.parseColor("#ff0000"))
-        }
-        else if(storeSale[position].remain_stat == "empty") {
+        } else if (storeSale[position].remain_stat == "empty") {
             holder.binding.remainStat.text = "0~1개"
             holder.binding.remainStat.setTextColor(Color.parseColor("#000000"))
-        }
-        else if(storeSale[position].remain_stat == "break") {
+        } else if (storeSale[position].remain_stat == "break") {
             holder.binding.remainStat.text = "판매중지"
             holder.binding.remainStat.setTextColor(Color.parseColor("#808080"))
         }
@@ -70,8 +66,6 @@ class FavoriteAdapter : RecyclerView.Adapter<FavoriteAdapter.Holder>() {
                 if (favoriteDatabase?.favoriteDao()?.getFavorites() != null) {
                     favoriteDatabase?.favoriteDao()?.delete(storeSale[position])
                 }
-                this.storeSale = favoriteDatabase?.favoriteDao()?.getFavorites()!!
-                Log.d("delete", "" + favoriteDatabase?.favoriteDao()?.getFavorites())
             }
 
             val thread = Thread(runnable)
@@ -92,7 +86,8 @@ class FavoriteAdapter : RecyclerView.Adapter<FavoriteAdapter.Holder>() {
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
-        val binding = ItemFavoriteBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding =
+            ItemFavoriteBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return Holder(binding)
     }
 
