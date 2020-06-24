@@ -32,7 +32,10 @@ class FavoriteAdapter : RecyclerView.Adapter<FavoriteAdapter.Holder>() {
     }
 
     override fun getItemCount(): Int {
-        return storeSale.size
+        return if (storeSale != null)
+            storeSale.size
+        else
+            0
     }
 
     override fun onBindViewHolder(holder: Holder, position: Int) {
@@ -62,13 +65,10 @@ class FavoriteAdapter : RecyclerView.Adapter<FavoriteAdapter.Holder>() {
         holder.binding.storeDelete.setOnClickListener {
             favoriteDatabase = FavoriteDatabase.getInstance(context)
 
-            val runnable = Runnable {
-                if (favoriteDatabase?.favoriteDao()?.getFavorites() != null) {
-                    favoriteDatabase?.favoriteDao()?.delete(storeSale[position])
-                }
-            }
-
-            val thread = Thread(runnable)
+            var thread = Thread(Runnable {
+                favoriteDatabase?.favoriteDao()?.delete(storeSale[position])
+                //this.storeSale[position] = favoriteDatabase?.favoriteDao()?.getFavorites()
+            })
             AlertDialog.Builder(context)
                 .setMessage("삭제하시겠습니까?")
                 .setPositiveButton(

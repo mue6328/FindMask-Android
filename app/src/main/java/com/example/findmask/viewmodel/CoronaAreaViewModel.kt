@@ -14,7 +14,7 @@ class CoronaAreaViewModel(app: Application) : AndroidViewModel(app) {
         return allAreas
     }
 
-    fun insert(coronaArea: CoronaArea) {
-        coronaAreaRepository.insert(coronaArea)
+    fun deleteAll() {
+        coronaAreaRepository.deleteAll()
     }
 }

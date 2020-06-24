@@ -84,13 +84,14 @@ class MainFragment : Fragment() {
                         0
                     )
                 }
-            } else {
+            }
+            if (Build.VERSION.SDK_INT >= 23 &&
+                ContextCompat.checkSelfPermission(
+                    requireActivity().applicationContext,
+                    android.Manifest.permission.ACCESS_FINE_LOCATION
+                ) == PackageManager.PERMISSION_GRANTED) {
                 location = lm!!.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
-                // 에뮬레이터 테스트
-                //var longitude = 127.0342169
-                //var latitude = 37.5010881
 
-                // 휴대폰
                 var longitude = location!!.longitude
                 var latitude = location!!.latitude
 
@@ -177,12 +178,12 @@ class MainFragment : Fragment() {
 
                 }
 
-                lm.requestLocationUpdates(
-                    LocationManager.GPS_PROVIDER,
-                    1000,
-                    1f,
-                    locationListener
-                )
+//                lm.requestLocationUpdates(
+//                    LocationManager.GPS_PROVIDER,
+//                    1000,
+//                    1f,
+//                    locationListener
+//                )
                 lm.requestLocationUpdates(
                     LocationManager.NETWORK_PROVIDER,
                     1000,

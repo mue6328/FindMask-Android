@@ -1,11 +1,7 @@
 package com.example.findmask.database
 
-import com.example.findmask.dao.CoronaAreaDao
-import android.os.AsyncTask
-import com.example.findmask.model.CoronaArea
 import android.app.Application
 import androidx.lifecycle.LiveData
-import com.example.findmask.dao.FavoriteDao
 import com.example.findmask.model.MoreInfo
 import java.lang.Exception
 
@@ -18,10 +14,10 @@ class FavoriteRepository(app: Application) {
         return allFavorites
     }
 
-    fun insert(moreinfo: MoreInfo) {
+    fun deleteAll() {
         try {
             var thread = Thread(Runnable {
-                favoriteDao.insert(moreinfo)
+                favoriteDao.deleteAll()
             })
             thread.start()
         } catch (e: Exception) {}

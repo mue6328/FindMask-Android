@@ -15,7 +15,9 @@ import android.content.Context
 import com.example.findmask.database.FavoriteDatabase
 import android.util.Log
 import android.widget.Toast
+import androidx.lifecycle.ViewModelProvider
 import com.example.findmask.databinding.ItemMoreinfoBinding
+import com.example.findmask.viewmodel.FavoriteViewModel
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.List
@@ -38,7 +40,10 @@ class MoreInfoAdapter : RecyclerView.Adapter<MoreInfoAdapter.Holder>() {
     }
 
     override fun getItemCount(): Int {
-        return storeSale.size
+        return if (storeSale != null)
+            storeSale.size
+        else
+            0
     }
 
     override fun onBindViewHolder(holder: Holder, position: Int) {
@@ -76,7 +81,7 @@ class MoreInfoAdapter : RecyclerView.Adapter<MoreInfoAdapter.Holder>() {
 
             var toast = ""
 
-            val runnable = Runnable {
+            val thread = Thread(Runnable {
                 val store = MoreInfo(
                     storeSale[position].name,
                     storeSale[position].addr,
@@ -92,9 +97,7 @@ class MoreInfoAdapter : RecyclerView.Adapter<MoreInfoAdapter.Holder>() {
                     favoriteDatabase?.favoriteDao()?.insert(store)
                     this.storeSale[position].isfavorite = true
                 }
-            }
-
-            val thread = Thread(runnable)
+            })
             thread.start()
             if (this.storeSale[position].isfavorite)
                 toast = "즐겨찾기에서 삭제되었습니다."

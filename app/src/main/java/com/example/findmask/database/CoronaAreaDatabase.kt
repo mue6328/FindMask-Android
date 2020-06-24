@@ -1,7 +1,5 @@
 package com.example.findmask.database
 
-import com.example.findmask.dao.FavoriteDao
-
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room

@@ -41,10 +41,9 @@ class CoronaAreaAdapter : RecyclerView.Adapter<CoronaAreaAdapter.Holder>() {
 
     fun addItem(coronaElement: CoronaArea) {
         coronaAreaDatabase = CoronaAreaDatabase.getInstance(context)
-        var runnable = Runnable {
+        var thread = Thread(Runnable {
             coronaAreaDatabase?.coronaAreaDao()?.insert(coronaElement)
-        }
-        var thread = Thread(runnable)
+        })
         thread.start()
     }
 
@@ -71,13 +70,10 @@ class CoronaAreaAdapter : RecyclerView.Adapter<CoronaAreaAdapter.Holder>() {
         holder.binding.delete.setOnClickListener {
             coronaAreaDatabase = CoronaAreaDatabase.getInstance(context)
 
-            val runnable = Runnable {
-                if (coronaAreaDatabase?.coronaAreaDao()?.getAreas() != null) {
-                    coronaAreaDatabase?.coronaAreaDao()?.delete(coronaArea[position])
-                }
-            }
+            val thread = Thread(Runnable {
+                coronaAreaDatabase?.coronaAreaDao()?.delete(coronaArea[position])
+            })
 
-            val thread = Thread(runnable)
             AlertDialog.Builder(context)
                 .setMessage("삭제하시겠습니까?")
                 .setPositiveButton(

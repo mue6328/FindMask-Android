@@ -84,6 +84,8 @@ class MoreInfoFragment : Fragment() {
             favoriteList = it
         })
 
+
+
         binding.searchFilter.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(p0: Editable?) {
                 moreInfoAdapter.filter(binding.searchFilter.text.toString().toLowerCase())
@@ -129,18 +131,13 @@ class MoreInfoFragment : Fragment() {
                     ) {
                         moreInfoList.clear()
                         moreInfoListFavorite.clear()
-                        Log.i(
-                            "listsize7",
-                            "" + favoriteList + response.body()!!.count + response.body()!!.stores
-                        )
                         if (response.body()!!.stores.isEmpty() && response.code() == 200) {
                             binding.searchFilter.visibility = View.GONE
                             binding.maskSellInfo.visibility = View.VISIBLE
                             binding.research.visibility = View.VISIBLE
                         } else {
                             binding.searchFilter.visibility = View.VISIBLE
-                            if (favoriteList.isNotEmpty()) {
-                                Log.i("listsize3", "" + favoriteList)
+                            if (favoriteList.isNotEmpty()) { // 즐겨찾기 된 항목들 추가
                                 for (j in favoriteList.indices) {
                                     for (i in 0 until response.body()!!.count) {
                                         isfavorite =
@@ -159,11 +156,9 @@ class MoreInfoFragment : Fragment() {
                                         }
                                     }
                                 }
-                            } else {
+                            } else { // favoriteList가 null일때
                                 for (i in 0 until response.body()!!.count) {
                                     if (response.body()!!.stores[i].remain_stat != null) {
-                                        isfavorite = false
-                                        Log.i("listsize2", "" + favoriteList)
                                         moreInfoList.add(
                                             MoreInfo(
                                                 response.body()!!.stores[i].name,
@@ -171,18 +166,14 @@ class MoreInfoFragment : Fragment() {
                                                 response.body()!!.stores[i].remain_stat,
                                                 response.body()!!.stores[i].stock_at,
                                                 response.body()!!.stores[i].created_at,
-                                                isfavorite
+                                                false
                                             )
                                         )
                                     }
                                 }
                             }
 
-                            for (k in 0 until response.body()!!.count) {
-                                Log.d(
-                                    "favoritesize",
-                                    "" + moreInfoListFavorite.isNotEmpty() + response.body()!!.stores
-                                )
+                            for (k in 0 until response.body()!!.count) { // 즐겨찾기 되지 않은 항목들 추가
                                 if (moreInfoListFavorite.isNotEmpty() && response.body()!!.stores[k].remain_stat != null) {
                                     if (!moreInfoListFavorite.contains(
                                             MoreInfo(
@@ -206,17 +197,6 @@ class MoreInfoFragment : Fragment() {
                                             )
                                         )
                                     }
-                                } else if (response.body()!!.stores[k].remain_stat != null){
-                                    moreInfoList.add(
-                                        MoreInfo(
-                                            response.body()!!.stores[k].name,
-                                            response.body()!!.stores[k].addr,
-                                            response.body()!!.stores[k].remain_stat,
-                                            response.body()!!.stores[k].stock_at,
-                                            response.body()!!.stores[k].created_at,
-                                            false
-                                        )
-                                    )
                                 }
                             }
 
@@ -229,7 +209,101 @@ class MoreInfoFragment : Fragment() {
                     }
                 })
 
-            binding.research.setOnClickListener {
+            binding.swipeRefreshLayout.setOnRefreshListener {
+                MaskService.getStoreByGeoInfo(latitude, longitude, m)
+                    .enqueue(object : Callback<MaskByGeoInfo> {
+                        override fun onFailure(call: Call<MaskByGeoInfo>, t: Throwable) {
+                            Log.d("error", t.toString())
+                        }
+
+                        override fun onResponse(
+                            call: Call<MaskByGeoInfo>,
+                            response: Response<MaskByGeoInfo>
+                        ) {
+                            moreInfoList.clear()
+                            moreInfoListFavorite.clear()
+                            if (response.body()!!.stores.isEmpty() && response.code() == 200) {
+                                binding.searchFilter.visibility = View.GONE
+                                binding.maskSellInfo.visibility = View.VISIBLE
+                                binding.research.visibility = View.VISIBLE
+                            } else {
+                                binding.searchFilter.visibility = View.VISIBLE
+                                if (favoriteList.isNotEmpty()) { // 즐겨찾기 된 항목들 추가
+                                    for (j in favoriteList.indices) {
+                                        for (i in 0 until response.body()!!.count) {
+                                            isfavorite =
+                                                favoriteList[j].addr == response.body()!!.stores[i].addr
+                                            if (isfavorite) {
+                                                moreInfoListFavorite.add(
+                                                    MoreInfo(
+                                                        response.body()!!.stores[i].name,
+                                                        response.body()!!.stores[i].addr,
+                                                        response.body()!!.stores[i].remain_stat,
+                                                        response.body()!!.stores[i].stock_at,
+                                                        response.body()!!.stores[i].created_at,
+                                                        isfavorite
+                                                    )
+                                                )
+                                            }
+                                        }
+                                    }
+                                } else { // favoriteList가 null일때
+                                    for (i in 0 until response.body()!!.count) {
+                                        if (response.body()!!.stores[i].remain_stat != null) {
+                                            moreInfoList.add(
+                                                MoreInfo(
+                                                    response.body()!!.stores[i].name,
+                                                    response.body()!!.stores[i].addr,
+                                                    response.body()!!.stores[i].remain_stat,
+                                                    response.body()!!.stores[i].stock_at,
+                                                    response.body()!!.stores[i].created_at,
+                                                    false
+                                                )
+                                            )
+                                        }
+                                    }
+                                }
+
+                                for (k in 0 until response.body()!!.count) { // 즐겨찾기 되지 않은 항목들 추가
+                                    if (moreInfoListFavorite.isNotEmpty() && response.body()!!.stores[k].remain_stat != null) {
+                                        if (!moreInfoListFavorite.contains(
+                                                MoreInfo(
+                                                    response.body()!!.stores[k].name,
+                                                    response.body()!!.stores[k].addr,
+                                                    response.body()!!.stores[k].remain_stat,
+                                                    response.body()!!.stores[k].stock_at,
+                                                    response.body()!!.stores[k].created_at,
+                                                    true
+                                                )
+                                            )
+                                        ) {
+                                            moreInfoList.add(
+                                                MoreInfo(
+                                                    response.body()!!.stores[k].name,
+                                                    response.body()!!.stores[k].addr,
+                                                    response.body()!!.stores[k].remain_stat,
+                                                    response.body()!!.stores[k].stock_at,
+                                                    response.body()!!.stores[k].created_at,
+                                                    false
+                                                )
+                                            )
+                                        }
+                                    }
+                                }
+
+                                moreInfoListFavorite.addAll(moreInfoList)
+
+                                Log.i("listsize", "" + moreInfoListFavorite.size)
+
+                                moreInfoAdapter.setItem(moreInfoListFavorite, view.context)
+                            }
+                        }
+                })
+                binding.swipeRefreshLayout.isRefreshing = false
+            }
+
+
+            binding.research.setOnClickListener { // 500m 내에 병원이 없을 경우 1km부터 재검색함
                 if (binding.research.text.contains("1km")) {
                     m = 1000
                     binding.maskSellInfo.run {
@@ -297,11 +371,8 @@ class MoreInfoFragment : Fragment() {
                         ) {
                             moreInfoList.clear()
                             moreInfoListFavorite.clear()
-                            Log.i(
-                                "listsize7",
-                                "" + favoriteList + response.body()!!.count + response.body()!!.stores
-                            )
                             if (response.body()!!.stores.isEmpty() && response.code() == 200) {
+                                // response를 받아오는데 성공했지만 반경 내에 병원이 없을 때
                                 binding.searchFilter.visibility = View.GONE
                                 binding.maskSellInfo.visibility = View.VISIBLE
                                 if (m == 5000)
@@ -313,7 +384,6 @@ class MoreInfoFragment : Fragment() {
                                 binding.maskSellInfo.visibility = View.GONE
                                 binding.research.visibility = View.GONE
                                 if (favoriteList.isNotEmpty()) {
-                                    Log.i("listsize3", "" + favoriteList)
                                     for (j in favoriteList.indices) {
                                         for (i in 0 until response.body()!!.count) {
                                             isfavorite =
@@ -333,11 +403,9 @@ class MoreInfoFragment : Fragment() {
 
                                         }
                                     }
-                                } else if (favoriteList.size == 0) {
+                                } else {
                                     for (i in 0 until response.body()!!.count) {
                                         if (response.body()!!.stores[i].remain_stat != null) {
-                                            isfavorite = false
-                                            Log.i("listsize2", "" + favoriteList)
                                             moreInfoList.add(
                                                 MoreInfo(
                                                     response.body()!!.stores[i].name,
@@ -345,7 +413,7 @@ class MoreInfoFragment : Fragment() {
                                                     response.body()!!.stores[i].remain_stat,
                                                     response.body()!!.stores[i].stock_at,
                                                     response.body()!!.stores[i].created_at,
-                                                    isfavorite
+                                                    false
                                                 )
                                             )
                                         }
@@ -380,17 +448,6 @@ class MoreInfoFragment : Fragment() {
                                                 )
                                             )
                                         }
-                                    } else if (response.body()!!.stores[k].remain_stat != null) {
-                                        moreInfoList.add(
-                                            MoreInfo(
-                                                response.body()!!.stores[k].name,
-                                                response.body()!!.stores[k].addr,
-                                                response.body()!!.stores[k].remain_stat,
-                                                response.body()!!.stores[k].stock_at,
-                                                response.body()!!.stores[k].created_at,
-                                                false
-                                            )
-                                        )
                                     }
                                 }
 

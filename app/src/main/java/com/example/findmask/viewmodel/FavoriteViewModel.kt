@@ -13,10 +13,10 @@ class FavoriteViewModel(app: Application) : AndroidViewModel(app) {
     private val allFavorites = favoriteRepository.getFavorites()
 
     fun getAllFavorites() : LiveData<List<MoreInfo>> {
-        return allFavorites
+        return this.allFavorites
     }
 
-    fun insert(moreInfo: MoreInfo) {
-        favoriteRepository.insert(moreInfo)
+    fun deleteAll() {
+        favoriteRepository.deleteAll()
     }
 }

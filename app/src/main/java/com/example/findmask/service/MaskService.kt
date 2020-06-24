@@ -10,12 +10,6 @@ import retrofit2.http.Query
 class MaskService {
 
     interface MaskServiceImpl {
-        @GET("stores/json/{page}/{perPage}")
-        fun getStoresInfo(
-            @Query("page") page: Int,
-            @Query("perPage") perPage: Int
-        ): Call<MaskInfo>
-
         @GET("storesByGeo/json?")
         fun getStoreByGeoInfo(
             @Query("lat") lat: Number,

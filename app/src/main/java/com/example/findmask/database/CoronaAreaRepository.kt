@@ -1,7 +1,5 @@
 package com.example.findmask.database
 
-import com.example.findmask.dao.CoronaAreaDao
-import android.os.AsyncTask
 import com.example.findmask.model.CoronaArea
 import android.app.Application
 import androidx.lifecycle.LiveData
@@ -16,10 +14,10 @@ class CoronaAreaRepository(app: Application) {
         return allCoronaArea
     }
 
-    fun insert(coronaArea: CoronaArea) {
+    fun deleteAll() {
         try {
             var thread = Thread(Runnable {
-                coronaAreaDao.insert(coronaArea)
+                coronaAreaDao.deleteAll()
             })
             thread.start()
         } catch (e: Exception) {

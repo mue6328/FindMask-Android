@@ -47,7 +47,7 @@ class CoronaFragment : Fragment() {
         var description = Description()
         var entry = ArrayList<PieEntry>()
         var totalCase: String? = null
-        var aaa: String? = null
+        var korTotalCase: String? = null
         var todayCase: Int? = null
 
         addColors()
@@ -63,22 +63,21 @@ class CoronaFragment : Fragment() {
 
                     totalCase = response.body()!!.TotalCase.replace(",","")
 
-                    //var sss = dd!!.replace()
                     CoronaService.getCoronaInfoNew(Utils.API_KEY).enqueue(object : Callback<CoronaInfoNew> {
                         override fun onFailure(call: Call<CoronaInfoNew>, t: Throwable) {
                             Log.d("error", t.toString())
                         }
 
                         override fun onResponse(call: Call<CoronaInfoNew>, response: Response<CoronaInfoNew>) {
-                            aaa = response.body()!!.korea.totalCase.replace(",","")
-                            if (aaa!!.toInt() > totalCase!!.toInt())
-                                todayCase = aaa!!.toInt() - totalCase!!.toInt()
-                            else if (aaa!!.toInt() < totalCase!!.toInt())
-                                todayCase = totalCase!!.toInt() - aaa!!.toInt()
+                            korTotalCase = response.body()!!.korea.totalCase.replace(",","")
+                            if (korTotalCase!!.toInt() > totalCase!!.toInt())
+                                todayCase = korTotalCase!!.toInt() - totalCase!!.toInt()
+                            else if (korTotalCase!!.toInt() < totalCase!!.toInt())
+                                todayCase = totalCase!!.toInt() - korTotalCase!!.toInt()
                             else
-                                todayCase = totalCase!!.toInt() - aaa!!.toInt()
+                                todayCase = totalCase!!.toInt() - korTotalCase!!.toInt()
 
-                            Log.i("totalcase", "" + todayCase + " " + aaa + " " + totalCase)
+                            Log.i("totalcase", "" + todayCase + " " + korTotalCase + " " + totalCase)
                             if (todayCase == 0)
                                 binding.todayCase.text = "전일 대비 + " + response.body()!!.korea.newCase + "명"
                             else
@@ -142,7 +141,101 @@ class CoronaFragment : Fragment() {
             }
         })
 
-//        Log.d("dd", dd)
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            addColors()
+            CoronaService.getCoronaInfo(Utils.API_KEY).enqueue(object : Callback<CoronaInfo> {
+                override fun onFailure(call: Call<CoronaInfo>, t: Throwable) {
+                    Log.d("error", t.toString())
+                }
+
+                override fun onResponse(call: Call<CoronaInfo>, response: Response<CoronaInfo>) {
+                    if (response.body() != null) {
+                        Log.d("nowcase", response.body()!!.TotalCaseBefore)
+                        setPieChart(binding.pieChart, description)
+
+                        totalCase = response.body()!!.TotalCase.replace(",","")
+
+                        CoronaService.getCoronaInfoNew(Utils.API_KEY).enqueue(object : Callback<CoronaInfoNew> {
+                            override fun onFailure(call: Call<CoronaInfoNew>, t: Throwable) {
+                                Log.d("error", t.toString())
+                            }
+
+                            override fun onResponse(call: Call<CoronaInfoNew>, response: Response<CoronaInfoNew>) {
+                                korTotalCase = response.body()!!.korea.totalCase.replace(",","")
+                                if (korTotalCase!!.toInt() > totalCase!!.toInt())
+                                    todayCase = korTotalCase!!.toInt() - totalCase!!.toInt()
+                                else if (korTotalCase!!.toInt() < totalCase!!.toInt())
+                                    todayCase = totalCase!!.toInt() - korTotalCase!!.toInt()
+                                else
+                                    todayCase = totalCase!!.toInt() - korTotalCase!!.toInt()
+
+                                Log.i("totalcase", "" + todayCase + " " + korTotalCase + " " + totalCase)
+                                if (todayCase == 0)
+                                    binding.todayCase.text = "전일 대비 + " + response.body()!!.korea.newCase + "명"
+                                else
+                                    binding.todayCase.text = "전일 대비 + " + todayCase + "명"
+                            }
+                        })
+                        entry.clear()
+                        entry.add(
+                            PieEntry(
+                                response.body()!!.city1p.toFloat(),
+                                response.body()!!.city1n
+                            )
+                        )
+                        entry.add(
+                            PieEntry(
+                                response.body()!!.city2p.toFloat(),
+                                response.body()!!.city2n
+                            )
+                        )
+                        entry.add(
+                            PieEntry(
+                                response.body()!!.city3p.toFloat(),
+                                response.body()!!.city3n
+                            )
+                        )
+                        entry.add(
+                            PieEntry(
+                                response.body()!!.city4p.toFloat(),
+                                response.body()!!.city4n
+                            )
+                        )
+                        entry.add(
+                            PieEntry(
+                                response.body()!!.city5p.toFloat(),
+                                response.body()!!.city5n
+                            )
+                        )
+
+                        var dataset = PieDataSet(entry, "")
+
+                        dataset.colors = colors
+
+                        var pieData = PieData(dataset)
+                        pieData.setValueTextSize(10f)
+                        binding.pieChart.data = pieData
+
+                        var nowCase = response.body()!!.TotalCaseBefore.toInt()
+
+                        binding.totalCase.text = response.body()!!.TotalCase + " 명"
+                        binding.totalRecovered.text = response.body()!!.TotalRecovered + " 명"
+                        binding.totalNowCase.text = response.body()!!.NowCase + " 명"
+                        binding.totalDeath.text = response.body()!!.TotalDeath + " 명"
+
+                        binding.todayRecovered.text =
+                            "전일 대비 + " + response.body()!!.TodayRecovered + "명"
+                        if (nowCase > 0)
+                            binding.todayNowCase.text = "전일 대비 + " + nowCase + "명"
+                        else
+                            binding.todayNowCase.text = "전일 대비 - " + -nowCase + "명"
+                        binding.todayDeath.text = "전일 대비 + " + response.body()!!.TodayDeath + "명"
+                    }
+                }
+            })
+
+            binding.swipeRefreshLayout.isRefreshing = false
+        }
 
         return view
     }

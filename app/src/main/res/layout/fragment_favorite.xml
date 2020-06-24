@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+    android:id="@+id/swipeRefreshLayout"
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-
-    <ScrollView
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -18,6 +21,7 @@
                 android:id="@+id/deleteAll"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_margin="8dp"
                 android:text="전체 삭제"
                 android:textSize="18dp"
                 android:textAlignment="center"
@@ -37,16 +41,15 @@
 <!--                android:layout_height="?attr/actionBarSize"-->
 <!--                android:background="?attr/colorPrimary"/>-->
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/favoriteRecyclerView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
-
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/favoriteRecyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:nestedScrollingEnabled="false"/>
         </LinearLayout>
 
-
-
-    </ScrollView>
-
+    </androidx.core.widget.NestedScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

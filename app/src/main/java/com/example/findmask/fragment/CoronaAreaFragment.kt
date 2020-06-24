@@ -1,5 +1,6 @@
 package com.example.findmask.fragment
 
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -14,7 +15,6 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import android.util.Log
-import android.content.DialogInterface
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.findmask.adapter.CoronaAreaAdapter
 import com.example.findmask.database.CoronaAreaDatabase
@@ -44,6 +44,7 @@ class CoronaAreaFragment : Fragment() {
 
         var coronaAreaAdapter = CoronaAreaAdapter()
         val builder = AlertDialog.Builder(view.context)
+        var removeList = listOf<CoronaArea>()
 
         coronaAreaDatabase = CoronaAreaDatabase.getInstance(view.context)
 
@@ -54,7 +55,7 @@ class CoronaAreaFragment : Fragment() {
         }
 
         builder.setTitle("추가 할 지역을 선택하세요.")
-        builder.setItems(items) { dialogInterface, i ->
+        builder.setItems(items) { _, i ->
             country = items[i].toString()
             CoronaService.getCoronaInfoNew(Utils.API_KEY).enqueue(object : Callback<CoronaInfoNew> {
                 override fun onFailure(call: Call<CoronaInfoNew>, t: Throwable) {
@@ -291,6 +292,33 @@ class CoronaAreaFragment : Fragment() {
         coronaAreaViewModel.getAllAreas().observe(viewLifecycleOwner, Observer {
             coronaAreaAdapter.setItem(it, view.context)
         })
+
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            coronaAreaViewModel.getAllAreas().observe(viewLifecycleOwner, Observer {
+                coronaAreaAdapter.setItem(it, view.context)
+            })
+
+            binding.swipeRefreshLayout.isRefreshing = false
+        }
+
+        binding.deleteAll.setOnClickListener {
+            if (coronaAreaViewModel.getAllAreas() == null) {
+            } else {
+                AlertDialog.Builder(view.context)
+                    .setMessage("전체 삭제하시겠습니까?")
+                    .setPositiveButton(
+                        "예"
+                    ) { d: DialogInterface?, w: Int ->
+                        coronaAreaViewModel.deleteAll()
+                        coronaAreaAdapter.setItem(removeList, view.context)
+                    }
+                    .setNegativeButton(
+                        "아니오"
+                    ) { d: DialogInterface?, w: Int -> }
+                    .create()
+                    .show()
+            }
+        }
 
         binding.addAreaButton.setOnClickListener {
             dialog.show()

@@ -1,17 +1,14 @@
 package com.example.findmask.fragment
 
 import android.content.Context
-import android.content.pm.PackageManager
 import android.location.Location
 import android.content.DialogInterface
 import android.location.LocationManager
-import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.example.findmask.R
 import com.example.findmask.database.FavoriteDatabase
 import com.example.findmask.model.MoreInfo
 import java.util.ArrayList
@@ -59,11 +56,6 @@ class FavoriteFragment : Fragment() {
             setHasFixedSize(true)
         }
 
-        favoriteViewModel = ViewModelProvider(this).get(FavoriteViewModel::class.java)
-        favoriteViewModel.getAllFavorites().observe(viewLifecycleOwner, Observer {
-            favoriteList = it
-        })
-
         try {
             val lm: LocationManager? =
                 requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager
@@ -81,49 +73,103 @@ class FavoriteFragment : Fragment() {
 //                var longitude = 128.568975
 //                var latitude = 35.8438071
 
-            MaskService.getStoreByGeoInfo(latitude, longitude, 5000)
-                .enqueue(object : Callback<MaskByGeoInfo> {
-                    override fun onFailure(call: Call<MaskByGeoInfo>, t: Throwable) {
+            binding.swipeRefreshLayout.setOnRefreshListener {
+                favoriteViewModel = ViewModelProvider(this).get(FavoriteViewModel::class.java)
+                favoriteViewModel.getAllFavorites().observe(viewLifecycleOwner, Observer {
+                    favoriteList = it
+                    MaskService.getStoreByGeoInfo(latitude, longitude, 5000)
+                        .enqueue(object : Callback<MaskByGeoInfo> {
+                            override fun onFailure(call: Call<MaskByGeoInfo>, t: Throwable) {
 
-                    }
-
-                    override fun onResponse(
-                        call: Call<MaskByGeoInfo>,
-                        response: Response<MaskByGeoInfo>
-                    ) {
-                        for (j in favoriteList.indices) {
-                            for (i in 0 until response.body()!!.count) {
-                                if (favoriteList[j].addr == response.body()!!.stores[i].addr) {
-                                    favoriteList[j].remain_stat =
-                                        response.body()!!.stores[i].remain_stat
-                                    favoriteList[j].stock_at = response.body()!!.stores[i].stock_at
-                                    favoriteList[j].created_at =
-                                        response.body()!!.stores[i].created_at
-                                }
                             }
-                        }
-                        favoriteAdapter.setItem(favoriteList, view.context)
-                    }
+                            override fun onResponse(
+                                call: Call<MaskByGeoInfo>,
+                                response: Response<MaskByGeoInfo>
+                            ) {
+                                for (j in favoriteList.indices) {
+                                    for (i in 0 until response.body()!!.count) {
+                                        if (favoriteList[j].addr == response.body()!!.stores[i].addr) {
+                                            favoriteList[j].remain_stat =
+                                                response.body()!!.stores[i].remain_stat
+                                            favoriteList[j].stock_at = response.body()!!.stores[i].stock_at
+                                            favoriteList[j].created_at =
+                                                response.body()!!.stores[i].created_at
+                                        }
+                                    }
+                                }
+                                favoriteAdapter.setItem(favoriteList, view.context)
+                            }
+                        })
                 })
+
+                binding.swipeRefreshLayout.isRefreshing = false
+            }
+
+            favoriteViewModel = ViewModelProvider(this).get(FavoriteViewModel::class.java)
+            favoriteViewModel.getAllFavorites().observe(viewLifecycleOwner, Observer {
+                    favoriteList = it
+                    MaskService.getStoreByGeoInfo(latitude, longitude, 5000)
+                        .enqueue(object : Callback<MaskByGeoInfo> {
+                            override fun onFailure(call: Call<MaskByGeoInfo>, t: Throwable) {
+
+                            }
+                            override fun onResponse(
+                                call: Call<MaskByGeoInfo>,
+                                response: Response<MaskByGeoInfo>
+                            ) {
+                                for (j in favoriteList.indices) {
+                                    for (i in 0 until response.body()!!.count) {
+                                        if (favoriteList[j].addr == response.body()!!.stores[i].addr) {
+                                            favoriteList[j].remain_stat =
+                                                response.body()!!.stores[i].remain_stat
+                                            favoriteList[j].stock_at = response.body()!!.stores[i].stock_at
+                                            favoriteList[j].created_at =
+                                                response.body()!!.stores[i].created_at
+                                        }
+                                    }
+                                }
+                                favoriteAdapter.setItem(favoriteList, view.context)
+                            }
+                        })
+            })
+
+//            MaskService.getStoreByGeoInfo(latitude, longitude, 5000)
+//                .enqueue(object : Callback<MaskByGeoInfo> {
+//                    override fun onFailure(call: Call<MaskByGeoInfo>, t: Throwable) {
+//
+//                    }
+//
+//                    override fun onResponse(
+//                        call: Call<MaskByGeoInfo>,
+//                        response: Response<MaskByGeoInfo>
+//                    ) {
+//                        for (j in favoriteList.indices) {
+//                            for (i in 0 until response.body()!!.count) {
+//                                if (favoriteList[j].addr == response.body()!!.stores[i].addr) {
+//                                    favoriteList[j].remain_stat =
+//                                        response.body()!!.stores[i].remain_stat
+//                                    favoriteList[j].stock_at = response.body()!!.stores[i].stock_at
+//                                    favoriteList[j].created_at =
+//                                        response.body()!!.stores[i].created_at
+//                                }
+//                            }
+//                        }
+//                        favoriteAdapter.setItem(favoriteList, view.context)
+//                    }
+//                })
         } catch (e: SecurityException) {
             e.printStackTrace()
         }
 
         binding.deleteAll.setOnClickListener {
             if (favoriteList.isEmpty()) {
-                Log.d("listnull", "" + favoriteList.isEmpty())
             } else {
-                Log.i("listqq", "" + favoriteList)
-                val thread = Thread(Runnable {
-                    favoriteDatabase?.favoriteDao()?.deleteAll()
-                })
-
                 AlertDialog.Builder(view.context)
                     .setMessage("전체 삭제하시겠습니까?")
                     .setPositiveButton(
                         "예"
                     ) { d: DialogInterface?, w: Int ->
-                        thread.start()
+                        favoriteViewModel.deleteAll()
                         favoriteAdapter.setItem(removeList, view.context)
                     }
                     .setNegativeButton(
