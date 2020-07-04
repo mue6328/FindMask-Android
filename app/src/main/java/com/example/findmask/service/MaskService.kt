@@ -2,7 +2,6 @@ package com.example.findmask.service
 
 import com.example.findmask.Utils
 import com.example.findmask.model.MaskByGeoInfo
-import com.example.findmask.model.MaskInfo
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Query

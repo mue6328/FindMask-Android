@@ -107,12 +107,12 @@ class MoreInfoFragment : Fragment() {
 
             location = lm!!.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
             // 휴대폰
-//            var longitude = location!!.longitude
-//            var latitude = location!!.latitude
+            var longitude = location!!.longitude
+            var latitude = location!!.latitude
 
             // 에뮬레이터 테스트
-                var longitude = 127.0342169
-                var latitude = 37.5010881
+//                var longitude = 127.0342169
+//                var latitude = 37.5010881
 
 //                var longitude = 128.568975
 //                var latitude = 35.8438071
@@ -142,7 +142,7 @@ class MoreInfoFragment : Fragment() {
                                     for (i in 0 until response.body()!!.count) {
                                         isfavorite =
                                             favoriteList[j].addr == response.body()!!.stores[i].addr
-                                        if (isfavorite) {
+                                        if (isfavorite && response.body()!!.stores[i].remain_stat != null) {
                                             moreInfoListFavorite.add(
                                                 MoreInfo(
                                                     response.body()!!.stores[i].name,
@@ -197,6 +197,18 @@ class MoreInfoFragment : Fragment() {
                                             )
                                         )
                                     }
+                                }
+                                else if (response.body()!!.stores[k].remain_stat != null) {
+                                    moreInfoList.add(
+                                        MoreInfo(
+                                            response.body()!!.stores[k].name,
+                                            response.body()!!.stores[k].addr,
+                                            response.body()!!.stores[k].remain_stat,
+                                            response.body()!!.stores[k].stock_at,
+                                            response.body()!!.stores[k].created_at,
+                                            false
+                                        )
+                                    )
                                 }
                             }
 
@@ -289,6 +301,18 @@ class MoreInfoFragment : Fragment() {
                                             )
                                         }
                                     }
+                                    else if (response.body()!!.stores[k].remain_stat != null) {
+                                        moreInfoList.add(
+                                            MoreInfo(
+                                                response.body()!!.stores[k].name,
+                                                response.body()!!.stores[k].addr,
+                                                response.body()!!.stores[k].remain_stat,
+                                                response.body()!!.stores[k].stock_at,
+                                                response.body()!!.stores[k].created_at,
+                                                false
+                                            )
+                                        )
+                                    }
                                 }
 
                                 moreInfoListFavorite.addAll(moreInfoList)
@@ -362,7 +386,7 @@ class MoreInfoFragment : Fragment() {
                 MaskService.getStoreByGeoInfo(latitude, longitude, m)
                     .enqueue(object : Callback<MaskByGeoInfo> {
                         override fun onFailure(call: Call<MaskByGeoInfo>, t: Throwable) {
-                            Log.d("error", t.toString())
+                            Log.d("errorq", t.toString())
                         }
 
                         override fun onResponse(
@@ -371,6 +395,7 @@ class MoreInfoFragment : Fragment() {
                         ) {
                             moreInfoList.clear()
                             moreInfoListFavorite.clear()
+                            Log.d("resp", "" + response.code() + response.body()!!.stores)
                             if (response.body()!!.stores.isEmpty() && response.code() == 200) {
                                 // response를 받아오는데 성공했지만 반경 내에 병원이 없을 때
                                 binding.searchFilter.visibility = View.GONE
@@ -448,6 +473,18 @@ class MoreInfoFragment : Fragment() {
                                                 )
                                             )
                                         }
+                                    }
+                                    else if (response.body()!!.stores[k].remain_stat != null) {
+                                        moreInfoList.add(
+                                            MoreInfo(
+                                                response.body()!!.stores[k].name,
+                                                response.body()!!.stores[k].addr,
+                                                response.body()!!.stores[k].remain_stat,
+                                                response.body()!!.stores[k].stock_at,
+                                                response.body()!!.stores[k].created_at,
+                                                false
+                                            )
+                                        )
                                     }
                                 }
 

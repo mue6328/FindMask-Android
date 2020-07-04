@@ -57,6 +57,7 @@ class CoronaFragment : Fragment() {
             }
 
             override fun onResponse(call: Call<CoronaInfo>, response: Response<CoronaInfo>) {
+                Log.d("code", "" + response.code())
                 if (response.body() != null) {
                     Log.d("nowcase", response.body()!!.TotalCaseBefore)
                     setPieChart(binding.pieChart, description)
@@ -69,6 +70,7 @@ class CoronaFragment : Fragment() {
                         }
 
                         override fun onResponse(call: Call<CoronaInfoNew>, response: Response<CoronaInfoNew>) {
+                            Log.d("code", "" + response.code())
                             korTotalCase = response.body()!!.korea.totalCase.replace(",","")
                             if (korTotalCase!!.toInt() > totalCase!!.toInt())
                                 todayCase = korTotalCase!!.toInt() - totalCase!!.toInt()
@@ -149,6 +151,7 @@ class CoronaFragment : Fragment() {
                 }
 
                 override fun onResponse(call: Call<CoronaInfo>, response: Response<CoronaInfo>) {
+                    Log.d("code", "" + response.code())
                     if (response.body() != null) {
                         Log.d("nowcase", response.body()!!.TotalCaseBefore)
                         setPieChart(binding.pieChart, description)
@@ -161,6 +164,7 @@ class CoronaFragment : Fragment() {
                             }
 
                             override fun onResponse(call: Call<CoronaInfoNew>, response: Response<CoronaInfoNew>) {
+
                                 korTotalCase = response.body()!!.korea.totalCase.replace(",","")
                                 if (korTotalCase!!.toInt() > totalCase!!.toInt())
                                     todayCase = korTotalCase!!.toInt() - totalCase!!.toInt()
