@@ -37,7 +37,6 @@ import com.example.findmask.model.CoronaInfoNew
 class CoronaFragment : Fragment() {
     private var colors = ArrayList<Int>()
 
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
@@ -249,7 +248,7 @@ class CoronaFragment : Fragment() {
             add(Color.rgb(80, 188, 223))
             add(Color.rgb(211, 211, 211))
             add(Color.GRAY)
-            add(Color.DKGRAY)
+            add(Color.rgb(169, 169, 169))
             add(Color.LTGRAY)
         }
     }

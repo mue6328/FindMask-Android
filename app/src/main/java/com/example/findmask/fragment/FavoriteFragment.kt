@@ -63,18 +63,47 @@ class FavoriteFragment : Fragment() {
 
             location = lm!!.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
             // 휴대폰
-            var longitude = location!!.longitude
-            var latitude = location!!.latitude
+//            var longitude = location!!.longitude
+//            var latitude = location!!.latitude
 
             // 에뮬레이터 테스트
-//                var longitude = 127.0342169
-//                var latitude = 37.5010881
+                var longitude = 127.0342169
+                var latitude = 37.5010881
 
 //                var longitude = 128.568975
 //                var latitude = 35.8438071
 
+            favoriteViewModel = ViewModelProvider(this).get(FavoriteViewModel::class.java)
+            favoriteViewModel.getAllFavorites().observe(viewLifecycleOwner, Observer {
+                    favoriteList = it
+                Log.i("favoritelist", "" + it)
+                    MaskService.getStoreByGeoInfo(latitude, longitude, 5000)
+                        .enqueue(object : Callback<MaskByGeoInfo> {
+                            override fun onFailure(call: Call<MaskByGeoInfo>, t: Throwable) {
+
+                            }
+                            override fun onResponse(
+                                call: Call<MaskByGeoInfo>,
+                                response: Response<MaskByGeoInfo>
+                            ) {
+                                for (j in favoriteList.indices) {
+                                    for (i in 0 until response.body()!!.count) {
+                                        if (favoriteList[j].addr == response.body()!!.stores[i].addr) {
+                                            favoriteList[j].remain_stat =
+                                                response.body()!!.stores[i].remain_stat
+                                            favoriteList[j].stock_at = response.body()!!.stores[i].stock_at
+                                            favoriteList[j].created_at =
+                                                response.body()!!.stores[i].created_at
+                                            break
+                                        }
+                                    }
+                                }
+                                favoriteAdapter.setItem(favoriteList, view.context)
+                            }
+                        })
+            })
+
             binding.swipeRefreshLayout.setOnRefreshListener {
-                favoriteViewModel = ViewModelProvider(this).get(FavoriteViewModel::class.java)
                 favoriteViewModel.getAllFavorites().observe(viewLifecycleOwner, Observer {
                     favoriteList = it
                     MaskService.getStoreByGeoInfo(latitude, longitude, 5000)
@@ -94,6 +123,7 @@ class FavoriteFragment : Fragment() {
                                             favoriteList[j].stock_at = response.body()!!.stores[i].stock_at
                                             favoriteList[j].created_at =
                                                 response.body()!!.stores[i].created_at
+                                            break
                                         }
                                     }
                                 }
@@ -104,59 +134,6 @@ class FavoriteFragment : Fragment() {
 
                 binding.swipeRefreshLayout.isRefreshing = false
             }
-
-            favoriteViewModel = ViewModelProvider(this).get(FavoriteViewModel::class.java)
-            favoriteViewModel.getAllFavorites().observe(viewLifecycleOwner, Observer {
-                    favoriteList = it
-                    MaskService.getStoreByGeoInfo(latitude, longitude, 5000)
-                        .enqueue(object : Callback<MaskByGeoInfo> {
-                            override fun onFailure(call: Call<MaskByGeoInfo>, t: Throwable) {
-
-                            }
-                            override fun onResponse(
-                                call: Call<MaskByGeoInfo>,
-                                response: Response<MaskByGeoInfo>
-                            ) {
-                                for (j in favoriteList.indices) {
-                                    for (i in 0 until response.body()!!.count) {
-                                        if (favoriteList[j].addr == response.body()!!.stores[i].addr) {
-                                            favoriteList[j].remain_stat =
-                                                response.body()!!.stores[i].remain_stat
-                                            favoriteList[j].stock_at = response.body()!!.stores[i].stock_at
-                                            favoriteList[j].created_at =
-                                                response.body()!!.stores[i].created_at
-                                        }
-                                    }
-                                }
-                                favoriteAdapter.setItem(favoriteList, view.context)
-                            }
-                        })
-            })
-
-//            MaskService.getStoreByGeoInfo(latitude, longitude, 5000)
-//                .enqueue(object : Callback<MaskByGeoInfo> {
-//                    override fun onFailure(call: Call<MaskByGeoInfo>, t: Throwable) {
-//
-//                    }
-//
-//                    override fun onResponse(
-//                        call: Call<MaskByGeoInfo>,
-//                        response: Response<MaskByGeoInfo>
-//                    ) {
-//                        for (j in favoriteList.indices) {
-//                            for (i in 0 until response.body()!!.count) {
-//                                if (favoriteList[j].addr == response.body()!!.stores[i].addr) {
-//                                    favoriteList[j].remain_stat =
-//                                        response.body()!!.stores[i].remain_stat
-//                                    favoriteList[j].stock_at = response.body()!!.stores[i].stock_at
-//                                    favoriteList[j].created_at =
-//                                        response.body()!!.stores[i].created_at
-//                                }
-//                            }
-//                        }
-//                        favoriteAdapter.setItem(favoriteList, view.context)
-//                    }
-//                })
         } catch (e: SecurityException) {
             e.printStackTrace()
         }

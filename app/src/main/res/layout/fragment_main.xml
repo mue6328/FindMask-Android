@@ -56,39 +56,75 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
-                android:text="충분 (100개 이상)"
+                android:text="충분 "
+                android:textColor="#0000FF"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/maskInfo" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="(100개 이상)"
+                app:layout_constraintBottom_toBottomOf="@+id/plenty"
+                app:layout_constraintStart_toEndOf="@+id/plenty"
+                app:layout_constraintTop_toTopOf="@+id/plenty" />
 
             <TextView
                 android:id="@+id/some"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="보통 (30 ~ 99개)"
+                android:text="보통 "
+                android:textColor="#FFD400"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/plenty" />
 
             <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="(30 ~ 99개)"
+                app:layout_constraintBottom_toBottomOf="@+id/some"
+                app:layout_constraintStart_toEndOf="@+id/some"
+                app:layout_constraintTop_toTopOf="@+id/some" />
+
+            <TextView
                 android:id="@+id/few"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="부족 (30개 미만)"
+                android:text="부족 "
+                android:textColor="#FF0000"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/some" />
 
             <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="(30개 미만)"
+                app:layout_constraintBottom_toBottomOf="@+id/few"
+                app:layout_constraintStart_toEndOf="@+id/few"
+                app:layout_constraintTop_toTopOf="@+id/few" />
+
+            <TextView
                 android:id="@+id/empty"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="없음 (0개)"
+                android:text="없음, 판매중지 "
+                android:textColor="#000000"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/few" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="(0개)"
+                app:layout_constraintBottom_toBottomOf="@+id/empty"
+                app:layout_constraintStart_toEndOf="@+id/empty"
+                app:layout_constraintTop_toTopOf="@+id/empty" />
 
 
 

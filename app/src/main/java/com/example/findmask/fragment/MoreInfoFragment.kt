@@ -107,12 +107,12 @@ class MoreInfoFragment : Fragment() {
 
             location = lm!!.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
             // 휴대폰
-            var longitude = location!!.longitude
-            var latitude = location!!.latitude
+//            var longitude = location!!.longitude
+//            var latitude = location!!.latitude
 
             // 에뮬레이터 테스트
-//                var longitude = 127.0342169
-//                var latitude = 37.5010881
+                var longitude = 127.0342169
+                var latitude = 37.5010881
 
 //                var longitude = 128.568975
 //                var latitude = 35.8438071
@@ -153,6 +153,7 @@ class MoreInfoFragment : Fragment() {
                                                     isfavorite
                                                 )
                                             )
+                                            continue
                                         }
                                     }
                                 }
@@ -256,6 +257,7 @@ class MoreInfoFragment : Fragment() {
                                                         isfavorite
                                                     )
                                                 )
+                                                break
                                             }
                                         }
                                     }
@@ -424,6 +426,7 @@ class MoreInfoFragment : Fragment() {
                                                         isfavorite
                                                     )
                                                 )
+                                                break
                                             }
 
                                         }
