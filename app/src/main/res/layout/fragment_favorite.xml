@@ -28,6 +28,16 @@
                 android:textColor="#FFFFFF"
                 android:background="#000000"/>
 
+            <TextView
+                android:id="@+id/favoriteInfo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="즐겨찾기 된 판매처가 없습니다."
+                android:textColor="#000000"
+                android:visibility="gone"
+                android:layout_gravity="center"
+                android:textSize="20sp"/>
+
 <!--            <androidx.appcompat.widget.Toolbar-->
 <!--                android:id="@+id/toolbar"-->
 <!--                android:layout_width="match_parent"-->

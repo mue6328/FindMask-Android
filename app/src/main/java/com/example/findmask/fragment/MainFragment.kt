@@ -92,11 +92,11 @@ class MainFragment : Fragment() {
                 ) == PackageManager.PERMISSION_GRANTED) {
                 location = lm!!.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
 
-//                var longitude = location!!.longitude
-//                var latitude = location!!.latitude
+                var longitude = location!!.longitude
+                var latitude = location!!.latitude
 
-                var longitude = 127.0342169
-                var latitude = 37.5010881
+//                var longitude = 127.0342169
+//                var latitude = 37.5010881
 
                 val mapView = MapView(activity)
 
