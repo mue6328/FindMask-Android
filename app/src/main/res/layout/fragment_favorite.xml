@@ -24,6 +24,7 @@
                 android:layout_margin="8dp"
                 android:text="전체 삭제"
                 android:textSize="18dp"
+                android:visibility="gone"
                 android:textAlignment="center"
                 android:textColor="#FFFFFF"
                 android:background="#000000"/>

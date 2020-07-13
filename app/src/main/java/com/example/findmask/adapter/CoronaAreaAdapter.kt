@@ -34,8 +34,8 @@ class CoronaAreaAdapter : RecyclerView.Adapter<CoronaAreaAdapter.Holder>() {
     private var coronaAreaDatabase: CoronaAreaDatabase? = null
 
     fun setItem(list: List<CoronaArea>, context: Context) {
-        this.coronaArea = list
         this.context = context
+        this.coronaArea = list
         notifyDataSetChanged()
     }
 

@@ -45,6 +45,8 @@ class FavoriteFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val binding = FragmentFavoriteBinding.inflate(inflater, container, false)
+        var actionbar = (activity as AppCompatActivity).supportActionBar
+        actionbar!!.title = "즐겨찾기"
         val view = binding.root
 
         favoriteDatabase = FavoriteDatabase.getInstance(view.context)
@@ -63,17 +65,18 @@ class FavoriteFragment : Fragment() {
 
             location = lm!!.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
             // 휴대폰
-//            var longitude = location!!.longitude
-//            var latitude = location!!.latitude
+            var longitude = location!!.longitude
+            var latitude = location!!.latitude
 
             // 에뮬레이터 테스트
-                var longitude = 127.0342169
-                var latitude = 37.5010881
+//                var longitude = 127.0342169
+//                var latitude = 37.5010881
 
 //                var longitude = 128.568975
 //                var latitude = 35.8438071
 
             favoriteViewModel = ViewModelProvider(this).get(FavoriteViewModel::class.java)
+
             favoriteViewModel.getAllFavorites().observe(viewLifecycleOwner, Observer {
                 if (favoriteViewModel.getAllFavorites().value!!.isNotEmpty()) {
                     favoriteList = it
@@ -102,6 +105,7 @@ class FavoriteFragment : Fragment() {
                                     }
                                 }
                                 favoriteAdapter.setItem(favoriteList, view.context)
+                                binding.deleteAll.visibility = View.VISIBLE
                             }
                         })
                 }
@@ -140,6 +144,7 @@ class FavoriteFragment : Fragment() {
                                         }
                                     }
                                     favoriteAdapter.setItem(favoriteList, view.context)
+                                    binding.deleteAll.visibility = View.VISIBLE
                                 }
                             })
                     }

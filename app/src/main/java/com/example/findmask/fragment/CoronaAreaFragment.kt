@@ -15,6 +15,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.findmask.adapter.CoronaAreaAdapter
 import com.example.findmask.database.CoronaAreaDatabase
@@ -36,6 +37,8 @@ class CoronaAreaFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val binding = FragmentCoronaAreaBinding.inflate(inflater, container, false)
+        var actionbar = (activity as AppCompatActivity).supportActionBar
+        actionbar!!.title = "지역 별 코로나 정보"
         val view = binding.root
 
         var coronaAreaList = ArrayList<CoronaArea>()
@@ -297,8 +300,8 @@ class CoronaAreaFragment : Fragment() {
         binding.swipeRefreshLayout.setOnRefreshListener {
             coronaAreaViewModel.getAllAreas().observe(viewLifecycleOwner, Observer {
                 if (coronaAreaViewModel.getAllAreas().value!!.isNotEmpty()) {
-                    binding.deleteAll.visibility = View.GONE
-                    coronaAreaAdapter.setItem(it, view.context)
+                    binding.deleteAll.visibility = View.VISIBLE
+                    //coronaAreaAdapter.setItem(it, view.context)
                     CoronaService.getCoronaInfoNew(Utils.API_KEY)
                         .enqueue(object : Callback<CoronaInfoNew> {
                             override fun onFailure(call: Call<CoronaInfoNew>, t: Throwable) {
@@ -584,7 +587,7 @@ class CoronaAreaFragment : Fragment() {
         coronaAreaViewModel.getAllAreas().observe(viewLifecycleOwner, Observer {
             if (coronaAreaViewModel.getAllAreas().value!!.isNotEmpty()) {
                 binding.deleteAll.visibility = View.VISIBLE
-                coronaAreaAdapter.setItem(it, view.context)
+                //coronaAreaAdapter.setItem(it, view.context)
                 CoronaService.getCoronaInfoNew(Utils.API_KEY)
                     .enqueue(object : Callback<CoronaInfoNew> {
                         override fun onFailure(call: Call<CoronaInfoNew>, t: Throwable) {
@@ -831,6 +834,7 @@ class CoronaAreaFragment : Fragment() {
                                 }
                             }
                             Log.i("list", "" + coronaAreaList)
+                            //coronaAreaViewModel.getAllAreas().value = coronaAreaList
                             coronaAreaAdapter.setItem(coronaAreaList, view.context)
                         }
                     })

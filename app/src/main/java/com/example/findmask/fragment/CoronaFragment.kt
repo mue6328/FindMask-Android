@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.annotation.IntegerRes
 import androidx.fragment.app.Fragment
+import androidx.appcompat.app.ActionBar
 import com.example.findmask.R
 import com.example.findmask.Utils
 import com.example.findmask.databinding.FragmentCoronaBinding
@@ -32,6 +33,7 @@ import java.util.ArrayList
 import android.content.SharedPreferences;
 import androidx.preference.PreferenceManager
 import android.content.Context
+import androidx.appcompat.app.AppCompatActivity
 import com.example.findmask.model.CoronaInfoNew
 
 class CoronaFragment : Fragment() {
@@ -41,6 +43,8 @@ class CoronaFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         val binding = FragmentCoronaBinding.inflate(inflater, container, false)
+        var actionbar = (activity as AppCompatActivity).supportActionBar
+        actionbar!!.title = "코로나 정보"
         var view = binding.root
 
         var description = Description()

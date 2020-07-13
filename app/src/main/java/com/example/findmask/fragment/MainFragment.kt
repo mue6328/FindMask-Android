@@ -20,6 +20,7 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getSystemService
@@ -55,6 +56,8 @@ class MainFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         val binding = FragmentMainBinding.inflate(inflater, container, false)
+        var actionbar = (activity as AppCompatActivity).supportActionBar
+        actionbar!!.title = "메인 화면"
         val view = binding.root
 
         val activity = activity
@@ -67,10 +70,6 @@ class MainFragment : Fragment() {
         }
 
         try {
-            val lm: LocationManager? =
-                requireActivity().getSystemService(LOCATION_SERVICE) as LocationManager
-            var location: Location? = null
-
             if (Build.VERSION.SDK_INT >= 23 &&
                 ContextCompat.checkSelfPermission(
                     requireActivity().applicationContext,
@@ -90,6 +89,11 @@ class MainFragment : Fragment() {
                     requireActivity().applicationContext,
                     android.Manifest.permission.ACCESS_FINE_LOCATION
                 ) == PackageManager.PERMISSION_GRANTED) {
+
+                val lm: LocationManager? =
+                    requireActivity().getSystemService(LOCATION_SERVICE) as LocationManager
+                var location: Location? = null
+
                 location = lm!!.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
 
                 var longitude = location!!.longitude

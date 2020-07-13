@@ -1,8 +1,10 @@
 package com.example.findmask.fragment
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.location.Location
 import android.location.LocationManager
 import android.os.Build
@@ -32,6 +34,7 @@ import retrofit2.Response
 import kotlin.collections.ArrayList
 import android.widget.EditText
 import android.text.TextWatcher
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
@@ -59,13 +62,19 @@ class MoreInfoFragment : Fragment() {
 
     private var favoriteDatabase: FavoriteDatabase? = null
 
+    @SuppressLint("ResourceAsColor")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         val binding = FragmentMoreinfoBinding.inflate(inflater, container, false)
+        var actionbar = (activity as AppCompatActivity).supportActionBar
+        actionbar!!.title = "판매처 상세정보"
+//        actionbar!!.setBackgroundDrawable(ColorDrawable(R.color.colorGray))
+//        actionbar!!.setSplitBackgroundDrawable(ColorDrawable(R.color.colorGray))
+//        actionbar!!.setStackedBackgroundDrawable(ColorDrawable(R.color.colorGray))
         val view = binding.root
 
-        var m: Int = 500
+        var m = 500
 
         var moreInfoAdapter = MoreInfoAdapter()
 
@@ -107,12 +116,12 @@ class MoreInfoFragment : Fragment() {
 
             location = lm!!.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
             // 휴대폰
-//            var longitude = location!!.longitude
-//            var latitude = location!!.latitude
+            var longitude = location!!.longitude
+            var latitude = location!!.latitude
 
             // 에뮬레이터 테스트
-                var longitude = 127.0342169
-                var latitude = 37.5010881
+//                var longitude = 127.0342169
+//                var latitude = 37.5010881
 
 //                var longitude = 128.568975
 //                var latitude = 35.8438071
@@ -199,7 +208,7 @@ class MoreInfoFragment : Fragment() {
                                         )
                                     }
                                 }
-                                else if (response.body()!!.stores[k].remain_stat != null) {
+                                else if (moreInfoList.isEmpty() && response.body()!!.stores[k].remain_stat != null) {
                                     moreInfoList.add(
                                         MoreInfo(
                                             response.body()!!.stores[k].name,
@@ -303,7 +312,7 @@ class MoreInfoFragment : Fragment() {
                                             )
                                         }
                                     }
-                                    else if (response.body()!!.stores[k].remain_stat != null) {
+                                    else if (moreInfoList.isEmpty() && response.body()!!.stores[k].remain_stat != null) {
                                         moreInfoList.add(
                                             MoreInfo(
                                                 response.body()!!.stores[k].name,
@@ -477,7 +486,7 @@ class MoreInfoFragment : Fragment() {
                                             )
                                         }
                                     }
-                                    else if (response.body()!!.stores[k].remain_stat != null) {
+                                    else if (moreInfoList.isEmpty() && response.body()!!.stores[k].remain_stat != null) {
                                         moreInfoList.add(
                                             MoreInfo(
                                                 response.body()!!.stores[k].name,
