@@ -65,8 +65,8 @@ class FavoriteFragment : Fragment() {
 
             location = lm!!.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
             // 휴대폰
-            var longitude = location!!.longitude
-            var latitude = location!!.latitude
+//            var longitude = location!!.longitude
+//            var latitude = location!!.latitude
 
             // 에뮬레이터 테스트
 //                var longitude = 127.0342169
@@ -78,10 +78,10 @@ class FavoriteFragment : Fragment() {
             favoriteViewModel = ViewModelProvider(this).get(FavoriteViewModel::class.java)
 
             favoriteViewModel.getAllFavorites().observe(viewLifecycleOwner, Observer {
+                favoriteList = it
                 if (favoriteViewModel.getAllFavorites().value!!.isNotEmpty()) {
-                    favoriteList = it
                     Log.i("favoritelist", "" + it)
-                    MaskService.getStoreByGeoInfo(latitude, longitude, 5000)
+                    MaskService.getStoreByGeoInfoSample()
                         .enqueue(object : Callback<MaskByGeoInfo> {
                             override fun onFailure(call: Call<MaskByGeoInfo>, t: Throwable) {
 
@@ -91,45 +91,7 @@ class FavoriteFragment : Fragment() {
                                 call: Call<MaskByGeoInfo>,
                                 response: Response<MaskByGeoInfo>
                             ) {
-                                for (j in favoriteList.indices) {
-                                    for (i in 0 until response.body()!!.count) {
-                                        if (favoriteList[j].addr == response.body()!!.stores[i].addr) {
-                                            favoriteList[j].remain_stat =
-                                                response.body()!!.stores[i].remain_stat
-                                            favoriteList[j].stock_at =
-                                                response.body()!!.stores[i].stock_at
-                                            favoriteList[j].created_at =
-                                                response.body()!!.stores[i].created_at
-                                            break
-                                        }
-                                    }
-                                }
-                                favoriteAdapter.setItem(favoriteList, view.context)
-                                binding.deleteAll.visibility = View.VISIBLE
-                            }
-                        })
-                }
-                else {
-                    favoriteAdapter.setItem(removeList, view.context)
-                    binding.deleteAll.visibility = View.GONE
-                    binding.favoriteInfo.visibility = View.VISIBLE
-                }
-            })
-
-            binding.swipeRefreshLayout.setOnRefreshListener {
-                favoriteViewModel.getAllFavorites().observe(viewLifecycleOwner, Observer {
-                    if (favoriteViewModel.getAllFavorites().value!!.isNotEmpty()) {
-                        favoriteList = it
-                        MaskService.getStoreByGeoInfo(latitude, longitude, 5000)
-                            .enqueue(object : Callback<MaskByGeoInfo> {
-                                override fun onFailure(call: Call<MaskByGeoInfo>, t: Throwable) {
-
-                                }
-
-                                override fun onResponse(
-                                    call: Call<MaskByGeoInfo>,
-                                    response: Response<MaskByGeoInfo>
-                                ) {
+                                if (response.body() != null) {
                                     for (j in favoriteList.indices) {
                                         for (i in 0 until response.body()!!.count) {
                                             if (favoriteList[j].addr == response.body()!!.stores[i].addr) {
@@ -145,6 +107,52 @@ class FavoriteFragment : Fragment() {
                                     }
                                     favoriteAdapter.setItem(favoriteList, view.context)
                                     binding.deleteAll.visibility = View.VISIBLE
+                                }
+                            }
+                        })
+                }
+                else {
+                    //removeList.add(MoreInfo("1", "2", "3", "4", "5", false))
+                    favoriteAdapter.setItem(removeList, view.context)
+                    binding.deleteAll.visibility = View.GONE
+                    binding.favoriteInfo.visibility = View.VISIBLE
+                }
+                //favoriteAdapter.setItem(favoriteList, view.context)
+            })
+
+
+
+            binding.swipeRefreshLayout.setOnRefreshListener {
+                favoriteViewModel.getAllFavorites().observe(viewLifecycleOwner, Observer {
+                    if (favoriteViewModel.getAllFavorites().value!!.isNotEmpty()) {
+                        favoriteList = it
+                        MaskService.getStoreByGeoInfoSample()
+                            .enqueue(object : Callback<MaskByGeoInfo> {
+                                override fun onFailure(call: Call<MaskByGeoInfo>, t: Throwable) {
+
+                                }
+
+                                override fun onResponse(
+                                    call: Call<MaskByGeoInfo>,
+                                    response: Response<MaskByGeoInfo>
+                                ) {
+                                    if (response.body() != null) {
+                                        for (j in favoriteList.indices) {
+                                            for (i in 0 until response.body()!!.count) {
+                                                if (favoriteList[j].addr == response.body()!!.stores[i].addr) {
+                                                    favoriteList[j].remain_stat =
+                                                        response.body()!!.stores[i].remain_stat
+                                                    favoriteList[j].stock_at =
+                                                        response.body()!!.stores[i].stock_at
+                                                    favoriteList[j].created_at =
+                                                        response.body()!!.stores[i].created_at
+                                                    break
+                                                }
+                                            }
+                                        }
+                                        favoriteAdapter.setItem(favoriteList, view.context)
+                                        binding.deleteAll.visibility = View.VISIBLE
+                                    }
                                 }
                             })
                     }

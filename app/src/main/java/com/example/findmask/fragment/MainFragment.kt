@@ -63,7 +63,7 @@ class MainFragment : Fragment() {
         val activity = activity
 
         var shopMarker = MapPOIItem()
-        var remain_stat: String
+        lateinit var remain_stat: String
 
         binding.clear.setOnClickListener {
             mask_cardView.visibility = View.GONE
@@ -99,8 +99,13 @@ class MainFragment : Fragment() {
                 var longitude = location!!.longitude
                 var latitude = location!!.latitude
 
+                Log.i("latlng", "" + latitude + " " + longitude)
+
 //                var longitude = 127.0342169
 //                var latitude = 37.5010881
+
+//                var longitude = 127.0164096
+//                var latitude = 37.6254369
 
                 val mapView = MapView(activity)
 
@@ -118,7 +123,7 @@ class MainFragment : Fragment() {
                     markerType = MapPOIItem.MarkerType.CustomImage
                 }
 
-                MaskService.getStoreByGeoInfo(latitude, longitude, 5000).enqueue(object :
+                MaskService.getStoreByGeoInfoSample().enqueue(object :
                     Callback<MaskByGeoInfo> {
                     override fun onFailure(call: Call<MaskByGeoInfo>, t: Throwable) {
                         Log.d("error", t.toString())
@@ -128,32 +133,41 @@ class MainFragment : Fragment() {
                         call: Call<MaskByGeoInfo>,
                         response: Response<MaskByGeoInfo>
                     ) {
-                        for (i in 0 until response.body()!!.count) {
-                            if (response.body()!!.stores[i].remain_stat == "plenty") {
-                                shopMarker.markerType = MapPOIItem.MarkerType.BluePin
-                                remain_stat = "충분"
-                            } else if (response.body()!!.stores[i].remain_stat == "some") {
-                                shopMarker.markerType = MapPOIItem.MarkerType.YellowPin
-                                remain_stat = "보통"
-                            } else if (response.body()!!.stores[i].remain_stat == "few") {
-                                shopMarker.markerType = MapPOIItem.MarkerType.RedPin
-                                remain_stat = "부족"
-                            } else if (response.body()!!.stores[i].remain_stat == "empty") {
-                                shopMarker.markerType = MapPOIItem.MarkerType.CustomImage
-                                remain_stat = "없음"
-                            } else {
-                                shopMarker.markerType = MapPOIItem.MarkerType.CustomImage
-                                remain_stat = "판매중지"
-                            }
-                            shopMarker.run {
-                                itemName = remain_stat + " / " + response.body()!!.stores[i].name
-                                mapPoint = MapPoint.mapPointWithGeoCoord(
-                                    response.body()!!.stores[i].lat.toDouble(),
-                                    response.body()!!.stores[i].lng.toDouble())
-                                customImageResourceId = R.drawable.baseline_room_black_36dp
-                            }
+                        if (response.body() != null) {
+                            Log.d("latitude", response.body()!!.stores[0].lat.toString() + " " + response.body()!!.stores[0].lng)
+                            Log.d("marker", "" + response.body()!!.stores)
+                            for (i in 0 until 50) {
+                                    if (response.body()!!.stores[i].remain_stat == "plenty") {
+                                        shopMarker.markerType = MapPOIItem.MarkerType.BluePin
+                                        remain_stat = "충분"
+                                    } else if (response.body()!!.stores[i].remain_stat == "some") {
+                                        shopMarker.markerType = MapPOIItem.MarkerType.YellowPin
+                                        remain_stat = "보통"
+                                    } else if (response.body()!!.stores[i].remain_stat == "few") {
+                                        shopMarker.markerType = MapPOIItem.MarkerType.RedPin
+                                        remain_stat = "부족"
+                                    } else if (response.body()!!.stores[i].remain_stat == "empty") {
+                                        shopMarker.markerType = MapPOIItem.MarkerType.CustomImage
+                                        remain_stat = "없음"
+                                    } else if (response.body()!!.stores[i].remain_stat == "break") {
+                                        shopMarker.markerType = MapPOIItem.MarkerType.CustomImage
+                                        remain_stat = "판매중지"
+                                    } else if (response.body()!!.stores[i].remain_stat == null) {
+                                        shopMarker.markerType = MapPOIItem.MarkerType.CustomImage
+                                        remain_stat = "없음"
+                                    }
+                                    shopMarker.run {
+                                        itemName =
+                                            remain_stat + " / " + response.body()!!.stores[i].name
+                                        mapPoint = MapPoint.mapPointWithGeoCoord(
+                                            response.body()!!.stores[i].lat.toDouble(),
+                                            response.body()!!.stores[i].lng.toDouble()
+                                        )
+                                        customImageResourceId = R.drawable.baseline_room_black_36dp
+                                    }
 
-                            mapView.addPOIItem(shopMarker)
+                                    mapView.addPOIItem(shopMarker)
+                                }
                         }
                     }
                 })
@@ -161,8 +175,11 @@ class MainFragment : Fragment() {
                 val locationListener: LocationListener = object : LocationListener {
                     override fun onLocationChanged(location: Location?) {
                         if (location != null) {
-                            longitude = location!!.longitude
-                            latitude = location!!.latitude
+//                            longitude = location!!.longitude
+//                            latitude = location!!.latitude
+
+                            longitude = 127.0164096
+                            latitude = 37.6254369
 
                             mapView.removePOIItem(marker)
 

@@ -39,6 +39,11 @@ class MoreInfoAdapter : RecyclerView.Adapter<MoreInfoAdapter.Holder>() {
         notifyDataSetChanged()
     }
 
+    fun setItemSwipe(list: ArrayList<MoreInfo>) {
+        this.storeSale = list
+        notifyDataSetChanged()
+    }
+
     override fun getItemCount(): Int {
         return if (storeSale != null)
             storeSale.size

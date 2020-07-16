@@ -69,16 +69,11 @@ class MoreInfoFragment : Fragment() {
         val binding = FragmentMoreinfoBinding.inflate(inflater, container, false)
         var actionbar = (activity as AppCompatActivity).supportActionBar
         actionbar!!.title = "판매처 상세정보"
-//        actionbar!!.setBackgroundDrawable(ColorDrawable(R.color.colorGray))
-//        actionbar!!.setSplitBackgroundDrawable(ColorDrawable(R.color.colorGray))
-//        actionbar!!.setStackedBackgroundDrawable(ColorDrawable(R.color.colorGray))
         val view = binding.root
 
         var m = 500
 
         var moreInfoAdapter = MoreInfoAdapter()
-
-        val activity = activity
 
         binding.moreInfoRecyclerView.run {
             adapter = moreInfoAdapter
@@ -116,8 +111,8 @@ class MoreInfoFragment : Fragment() {
 
             location = lm!!.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
             // 휴대폰
-            var longitude = location!!.longitude
-            var latitude = location!!.latitude
+//            var longitude = location!!.longitude
+//            var latitude = location!!.latitude
 
             // 에뮬레이터 테스트
 //                var longitude = 127.0342169
@@ -128,7 +123,7 @@ class MoreInfoFragment : Fragment() {
 
             var isfavorite: Boolean = false
 
-            MaskService.getStoreByGeoInfo(latitude, longitude, m)
+            MaskService.getStoreByGeoInfoSample()
                 .enqueue(object : Callback<MaskByGeoInfo> {
                     override fun onFailure(call: Call<MaskByGeoInfo>, t: Throwable) {
                         Log.d("error", t.toString())
@@ -148,7 +143,7 @@ class MoreInfoFragment : Fragment() {
                             binding.searchFilter.visibility = View.VISIBLE
                             if (favoriteList.isNotEmpty()) { // 즐겨찾기 된 항목들 추가
                                 for (j in favoriteList.indices) {
-                                    for (i in 0 until response.body()!!.count) {
+                                    for (i in 0 until 25) {
                                         isfavorite =
                                             favoriteList[j].addr == response.body()!!.stores[i].addr
                                         if (isfavorite && response.body()!!.stores[i].remain_stat != null) {
@@ -166,8 +161,9 @@ class MoreInfoFragment : Fragment() {
                                         }
                                     }
                                 }
+                                Log.d("favoritelist", "" + moreInfoListFavorite)
                             } else { // favoriteList가 null일때
-                                for (i in 0 until response.body()!!.count) {
+                                for (i in 0 until 25) {
                                     if (response.body()!!.stores[i].remain_stat != null) {
                                         moreInfoList.add(
                                             MoreInfo(
@@ -182,8 +178,8 @@ class MoreInfoFragment : Fragment() {
                                     }
                                 }
                             }
-
-                            for (k in 0 until response.body()!!.count) { // 즐겨찾기 되지 않은 항목들 추가
+                            Log.d("moreinfolist", "" + moreInfoList)
+                            for (k in 0 until 25) { // 즐겨찾기 되지 않은 항목들 추가
                                 if (moreInfoListFavorite.isNotEmpty() && response.body()!!.stores[k].remain_stat != null) {
                                     if (!moreInfoListFavorite.contains(
                                             MoreInfo(
@@ -208,7 +204,7 @@ class MoreInfoFragment : Fragment() {
                                         )
                                     }
                                 }
-                                else if (moreInfoList.isEmpty() && response.body()!!.stores[k].remain_stat != null) {
+                                else if (favoriteList.isNotEmpty() && response.body()!!.stores[k].remain_stat != null) {
                                     moreInfoList.add(
                                         MoreInfo(
                                             response.body()!!.stores[k].name,
@@ -232,7 +228,8 @@ class MoreInfoFragment : Fragment() {
                 })
 
             binding.swipeRefreshLayout.setOnRefreshListener {
-                MaskService.getStoreByGeoInfo(latitude, longitude, m)
+                binding.searchFilter.text.clear()
+                MaskService.getStoreByGeoInfoSample()
                     .enqueue(object : Callback<MaskByGeoInfo> {
                         override fun onFailure(call: Call<MaskByGeoInfo>, t: Throwable) {
                             Log.d("error", t.toString())
@@ -252,7 +249,7 @@ class MoreInfoFragment : Fragment() {
                                 binding.searchFilter.visibility = View.VISIBLE
                                 if (favoriteList.isNotEmpty()) { // 즐겨찾기 된 항목들 추가
                                     for (j in favoriteList.indices) {
-                                        for (i in 0 until response.body()!!.count) {
+                                        for (i in 0 until 25) {
                                             isfavorite =
                                                 favoriteList[j].addr == response.body()!!.stores[i].addr
                                             if (isfavorite) {
@@ -271,7 +268,7 @@ class MoreInfoFragment : Fragment() {
                                         }
                                     }
                                 } else { // favoriteList가 null일때
-                                    for (i in 0 until response.body()!!.count) {
+                                    for (i in 0 until 25) {
                                         if (response.body()!!.stores[i].remain_stat != null) {
                                             moreInfoList.add(
                                                 MoreInfo(
@@ -287,7 +284,7 @@ class MoreInfoFragment : Fragment() {
                                     }
                                 }
 
-                                for (k in 0 until response.body()!!.count) { // 즐겨찾기 되지 않은 항목들 추가
+                                for (k in 0 until 25) { // 즐겨찾기 되지 않은 항목들 추가
                                     if (moreInfoListFavorite.isNotEmpty() && response.body()!!.stores[k].remain_stat != null) {
                                         if (!moreInfoListFavorite.contains(
                                                 MoreInfo(
@@ -312,7 +309,7 @@ class MoreInfoFragment : Fragment() {
                                             )
                                         }
                                     }
-                                    else if (moreInfoList.isEmpty() && response.body()!!.stores[k].remain_stat != null) {
+                                    else if (favoriteList.isNotEmpty() && response.body()!!.stores[k].remain_stat != null) {
                                         moreInfoList.add(
                                             MoreInfo(
                                                 response.body()!!.stores[k].name,
@@ -330,7 +327,7 @@ class MoreInfoFragment : Fragment() {
 
                                 Log.i("listsize", "" + moreInfoListFavorite.size)
 
-                                moreInfoAdapter.setItem(moreInfoListFavorite, view.context)
+                                moreInfoAdapter.setItemSwipe(moreInfoListFavorite)
                             }
                         }
                 })
@@ -394,7 +391,7 @@ class MoreInfoFragment : Fragment() {
                     }
                     binding.searchFilter.hint = "찾고 싶은 병원 명을 입력하세요. (반경 5km)"
                 }
-                MaskService.getStoreByGeoInfo(latitude, longitude, m)
+                MaskService.getStoreByGeoInfoSample()
                     .enqueue(object : Callback<MaskByGeoInfo> {
                         override fun onFailure(call: Call<MaskByGeoInfo>, t: Throwable) {
                             Log.d("errorq", t.toString())
@@ -421,7 +418,7 @@ class MoreInfoFragment : Fragment() {
                                 binding.research.visibility = View.GONE
                                 if (favoriteList.isNotEmpty()) {
                                     for (j in favoriteList.indices) {
-                                        for (i in 0 until response.body()!!.count) {
+                                        for (i in 0 until 25) {
                                             isfavorite =
                                                 favoriteList[j].addr == response.body()!!.stores[i].addr
                                             if (isfavorite && response.body()!!.stores[i].remain_stat != null) {
@@ -441,7 +438,7 @@ class MoreInfoFragment : Fragment() {
                                         }
                                     }
                                 } else {
-                                    for (i in 0 until response.body()!!.count) {
+                                    for (i in 0 until 25) {
                                         if (response.body()!!.stores[i].remain_stat != null) {
                                             moreInfoList.add(
                                                 MoreInfo(
@@ -457,7 +454,7 @@ class MoreInfoFragment : Fragment() {
                                     }
                                 }
 
-                                for (k in 0 until response.body()!!.count) {
+                                for (k in 0 until 25) {
                                     Log.d(
                                         "favoritesize",
                                         "" + moreInfoListFavorite.isNotEmpty() + response.body()!!.stores
@@ -486,7 +483,7 @@ class MoreInfoFragment : Fragment() {
                                             )
                                         }
                                     }
-                                    else if (moreInfoList.isEmpty() && response.body()!!.stores[k].remain_stat != null) {
+                                    else if (favoriteList.isNotEmpty() && response.body()!!.stores[k].remain_stat != null) {
                                         moreInfoList.add(
                                             MoreInfo(
                                                 response.body()!!.stores[k].name,
